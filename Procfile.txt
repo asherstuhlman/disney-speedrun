@@ -1,1 +1,1 @@
-web: gunicorn gminus.py:main
+web: gunicorn gminus:main
