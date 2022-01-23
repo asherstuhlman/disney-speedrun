@@ -10,16 +10,15 @@ import pytz
 #but only triggers during park open hours
 #We don't have a list of park open hours so we just run it 8 AM - midnight
 
-def appendRides(json_file):
-    global df
+def appendRides(df,json_file):
     for i in range(len(json_file["lands"])): 
         for j in range(len(json_file["lands"][i]["rides"])):
             id = json_file["lands"][i]["rides"][j]["id"]
             name = json_file["lands"][i]["rides"][j]["name"]
             df = df.append({'id':id,'name':name},ignore_index=True)
+    return df
 
-def addWaitTimes(json_file,next_col_name): #go through an update file and fill in the wait times for each ride 
-    global df
+def addWaitTimes(df,json_file,next_col_name): #go through an update file and fill in the wait times for each ride 
     for i in range(len(json_file["lands"])):
         for j in range(len(json_file["lands"][i]["rides"])):
             id = json_file["lands"][i]["rides"][j]["id"]
@@ -27,9 +26,9 @@ def addWaitTimes(json_file,next_col_name): #go through an update file and fill i
             df.loc[df.id==id,next_col_name] = wait   #set the latest wait time for a ride to the current wait time
             df.loc[df.id==id,"current_wait"] = wait #also update the current wait
             #This is the wrong way to do this! The correct way should be to generate a column of wait times and then append it.
+    return df
 
-def updateWaitRatio():
-    global df
+def updateWaitRatio(df):
     last_col = len(df.columns)
     print(last_col)
     if last_col > 17: #if we have enough data points
@@ -62,6 +61,7 @@ def updateWaitRatio():
         for row in df.itertuples():
             waitRatio = 1
             df.at[row[0],"wait_ratio"] = waitRatio
+    return df
     """
     with pysftp.Connection('server90.web-hosting.com', username='stuhazjf', password='QXNoLW1hbjE=') as sftp:
         with sftp.cd('/public_html/images'):           # temporarily chdir 
@@ -70,8 +70,7 @@ def updateWaitRatio():
 
 #todo: use https://github.com/cubehouse/themeparks for park open/close times so i don't waste cycles
 
-def addLatLon(): #also correct ride names for formatting
-    global df
+def addLatLon(df): #also correct ride names for formatting
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0"}
     lat_lon_csv = requests.get('http://stuhlman.net/genieminus/disney_ride_lat_lon.csv',headers=headers)
     lat_lon = pd.read_csv(lat_lon_csv)
@@ -83,6 +82,7 @@ def addLatLon(): #also correct ride names for formatting
         df.loc[df.id==row.id,"single_rider"] = row.single_rider
         df.loc[df.id==row.id,"lightning_lane"] = row.lightning_lane
         df.loc[df.id==row.id,"individual_lightning_lane"] = row.individual_lightning_lane
+    return df
 
 def main():
     now = datetime.now(pytz.timezone("US/Pacific")) #Disneyland timezone
@@ -93,8 +93,6 @@ def main():
     dis_waits_json = requests.get('https://queue-times.com/en-US/parks/16/queue_times.json',headers=headers).json()
     dca_waits_json = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json',headers=headers).json()
 
-    print(dis_waits_json)
-
     waits_csv_today = 'disney_waits_' + str(now.month) + "-" + str(now.day) + ".csv"
     waits_json_today = '/js/ride_data_x.js'
     date_js_today = '/js/update_date.js'
@@ -102,9 +100,9 @@ def main():
     if not os.path.exists(waits_csv_today): #Check if we already have a file. If we don't already have a file, make one.
         #This means that the Json gets overwritten even if it's a new day! We don't need yesterday's json.
         df = pd.DataFrame(columns = ['id','name','current_wait','wait_ratio','lat','lon','park','single_rider','lightning_lane','individual_lightning_lane'])
-        appendRides(dis_waits_json)
-        appendRides(dca_waits_json)
-        addLatLon()
+        appendRides(df,dis_waits_json)
+        appendRides(df,dca_waits_json)
+        df = addLatLon(df)
     else:
         df = pd.read_csv(waits_csv_today,encoding='latin1')
 
@@ -126,10 +124,10 @@ def main():
     df[next_col_name] = ''
     #create a new column with the date/time
 
-    addWaitTimes(dis_waits_json,next_col_name)
-    addWaitTimes(dca_waits_json,next_col_name) #these two amend the latest wait times to the newest column
+    addWaitTimes(df,dis_waits_json,next_col_name)
+    addWaitTimes(df,dca_waits_json,next_col_name) #these two amend the latest wait times to the newest column
 
-    updateWaitRatio()
+    updateWaitRatio(df)
 
     #wait until the next five minutes - should start at a given time for consistency
     with open (waits_csv_today,'w') as waitfile:
