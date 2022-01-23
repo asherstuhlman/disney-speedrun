@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<style>
+div.ride-container {
+	position: relative;
+	padding-top:3px;
+	margin-top:10px
+}
+
+.last-updated {
+  width: 80%;
+  height: 50px;
+  height: auto;
+  padding: 15px;
+  margin: auto;
+  background: #ffffff;
+  font-size: 2vw;
+  font-family: Helvetica;
+  text-align: center;
+}
+
+.ride {
+  width: 90%;
+  height: 50px;
+  height: auto;
+  padding: 15px;
+  margin: auto;
+  border: 3px solid black;
+  background: #75f2fc;
+  font-size: 3.5vw;
+  font-family: Helvetica;
+  vertical-align: middle;
+  
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+.high-wait {
+	background: #ffcccb;
+	}
+	
+.low-wait {
+	background: #90EE90;
+	}
+
+input[type='checkbox'] {
+    -webkit-appearance:none;
+    width:30px;
+    height:30px;
+    background:white;
+    border-radius:5px;
+    border:2px solid #555;
+}
+input[type='checkbox']:checked {
+    background: #abd;
+}
+
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="js/update_date.js"></script> 
+<script src="js/ride_data_x.js"></script> 
+<script type="text/javascript">
+//above: formerly ride_data.js
+
+function App() {}
+//This is the code for cookies - to remember the checked boxes.
+App.prototype.setState = function(state,id) {localStorage.setItem(id, state);}
+App.prototype.getState = function(id) {return localStorage.getItem(id);}
+
+function init_checkboxes() {
+    var checkbox_array = []
+    var checkboxes = document.querySelectorAll('input[type=checkbox]')
+    for (var i = 0; i < checkboxes.length; i++) {checkbox_array.push(checkboxes[i].id)}
+    for (var i = 0; i < checkboxes.length; i++) {checkbox_state(checkbox_array[i]);}
+	}
+
+function checkbox_state(checkbox_id) {
+        var app = new App();
+		var today = new Date();
+		var day_and_box_id = checkbox_id + "_" + today.getDate() + "_" + today.getMonth() + "_" + today.getFullYear()
+        var state = app.getState(day_and_box_id);
+		var checkbox = document.getElementById(checkbox_id);
+		if (state === 'true') {
+	        checkbox.checked = true;
+		}
+        checkbox.addEventListener('click', function() { app.setState(checkbox.checked,day_and_box_id);});
+}
+</script>
+</head>
+<body>
+<script type="text/javascript">
+/* Next steps:
+Add recommended next ride based on GPS (needs https)
+Add two park buttons so you can pick "Disneyland" or "DCA" (will show rides from both parks, but will sort your current park first, and the checkboxes on bottom)
+Add a button to show/hide SR, LL, ILL
+Add a button at bottom to clear all checkboxes, although i think it does reset every day
+Add Disneyland/DCA hours https://github.com/cubehouse/themeparks
+
+keep track of the order completed?
+Don't show rides not running at all that day???
+
+Add a cookie notification.
+/*
+
+
+/* take our ride data and put it into a json so we can use it*/
+const ride_data = JSON.parse(rdata);
+//alert(ride_data[0].name[1]);
+
+const waitTimes = []
+
+//Sort the list of columns and note the name of the last one, which is the current wait times
+lastTimeCol = Object.keys(ride_data[0]).sort()[Object.keys(ride_data[0]).length - 1]
+
+/*for each ride with GPS coordinates, create an array entry with name and wait time*/
+for (let i = 0; i < Object.keys(ride_data[0].lat).length; i++) {
+  if (ride_data[0].lat[i] != null) { //if the ride is one of the ones we have GPS for, add it
+	waitTimes.push([ride_data[0].name[i],ride_data[0][lastTimeCol][i],ride_data[0].wait_ratio[i],ride_data[0].id[i],ride_data[0].park[i],ride_data[0].single_rider[i],ride_data[0].lightning_lane[i],ride_data[0].individual_lightning_lane[i]])
+	//Format: 0 Name, 1 ride wait time, 2 wait ratio, 3 ride id, 4 park, 5 SR, 6 LL, 7 ILL
+	}
+} 
+
+function sortByWait(array) {
+	var sortedWaitTimes = array.sort(function(a,b){
+
+		//Should sort by park too once I can do that - and you can flip which park is active with a button on top.
+		
+		if (a[4] == "DL" && b[4] == "DCA")
+			{return -1}
+		if (a[4] == "DCA" && b[4] == "DL")
+			{return 1}
+		if (a[1] == 0)
+			{return 1} // sort rides not running to the end
+		else if (b[1] == 0)
+			{return -1} //  sort rides not running to the end
+		
+		cb_id_a = "checkbox" + a[3] //then sort checked rides to the end, using the cookies we set up earlier bc we haven't loaded the page to check their checked-off status yet
+		cb_id_b = "checkbox" + b[3]
+		
+		var app = new App(); 
+		var today = new Date();
+		var checked_a = app.getState(cb_id_a + "_" + today.getDate() + "_" + today.getMonth() + "_" + today.getFullYear());
+		var checked_b = app.getState(cb_id_b + "_" + today.getDate() + "_" + today.getMonth() + "_" + today.getFullYear());
+		if (checked_a == "true")
+			{return 1}
+		if (checked_b == "true")
+			{return -1}
+		//
+		
+		else if (a[2]==b[2])
+			{return a[1]-b[1];} // if there's a tie for wait ratio, sort by current wait time
+		return a[2]-b[2] // sort by wait ratio
+		})
+	return sortedWaitTimes
+	}
+
+sortedWaitTimes = sortByWait(waitTimes)
+
+$('<div class="last-updated">Disneyland / DCA Annotated Wait Times (Last updated: '+updated+')</div>').appendTo('body');
+
+for (i = 0; i < sortedWaitTimes.length; i++) { // this is the code to draw the divs
+  $('<div class="ride-container" >').appendTo('body');
+  if (sortedWaitTimes[i][2] > 1 || sortedWaitTimes[i][1] == 0) //choose class based on wait ratio
+	{rideClass = "ride high-wait"}
+  else if (sortedWaitTimes[i][2] < 1)
+	{rideClass = "ride low-wait"}
+  else
+	{rideClass = "ride"}
+  if (sortedWaitTimes[i][1] == 0)
+	{rideWait = "Not currently running"}
+  else
+	{rideWait = sortedWaitTimes[i][1] + " minutes"}
+  
+  rideFastOptions = ""
+  if (sortedWaitTimes[i][5] == "Yes" || sortedWaitTimes[i][6] == "Yes" || sortedWaitTimes[i][7] == "Yes" )
+	{
+	if (sortedWaitTimes[i][5] == "Yes")
+		{
+		if (sortedWaitTimes[i][6] == "Yes")
+			{rideFastOptions = " [SR/LL]"}
+		else if (sortedWaitTimes[i][7] == "Yes")
+			{rideFastOptions = " [SR/ILL]"}
+		else {rideFastOptions = " [SR]"}
+		}
+	else if (sortedWaitTimes[i][6] == "Yes")
+		{rideFastOptions = " [LL]"}
+	else if (sortedWaitTimes[i][7] == "Yes")
+		{rideFastOptions = " [ILL]"}
+	}
+  
+  rideDiv = "<div class='"+rideClass +"' id='r" + sortedWaitTimes[i][3] + "'><input type='checkbox' id='checkbox" + sortedWaitTimes[i][3] + "' /> " + sortedWaitTimes[i][0].trim() + ": " + rideWait + rideFastOptions + "</div>"
+  $('body').append(rideDiv)
+  $('</div>').appendTo('body');
+}
+$('<div class="last-updated" >Green: wait times going down. Blue: stable wait times. Red: wait times going up.</div>').appendTo('body');
+$('<div class="last-updated" >SR: Single rider line available. LL/ILL: Lightning Lane / Individual Lightning Lane.</div>').appendTo('body');
+$('<div class="last-updated" ><a href="https://queue-times.com/">Powered by Queue-Times.com</a> </div>').appendTo('body');
+init_checkboxes();
+
+// add a change event listener??
+/*
+var checkboxes = document.querySelectorAll('input[type=checkbox]');
+for(var i = 0; i < checkboxes.length; i++) {
+    checkboxes[i].addEventListener('change', function(){
+		itemID = checkboxes[i].id.slice(8)
+		$("r"+itemID).remove();
+		
+        //sortedWaitTimes = sortByWait(waitTimes);
+		init_checkboxes();
+    });
+}*/
+
+</script>
+</body>
