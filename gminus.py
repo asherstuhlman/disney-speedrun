@@ -74,7 +74,7 @@ def updateWaitRatio(df):
 def addLatLon(df): #also correct ride names for formatting
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0"}
     lat_lon_csv = requests.get('http://stuhlman.net/genieminus/disney_ride_lat_lon.csv',headers=headers).text
-    lat_lon = pd.read_csv(io.StringIO(lat_lon_csv.decode('utf-8')))
+    lat_lon = pd.read_csv(io.StringIO(lat_lon_csv))
     for row in lat_lon.itertuples(): #import latitude and longitude
         df.loc[df.id==row.id,"name"] = row.truename
         df.loc[df.id==row.id,"lat"] = row.lat
