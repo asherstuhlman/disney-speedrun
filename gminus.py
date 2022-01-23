@@ -100,8 +100,8 @@ def main():
     if not os.path.exists(waits_csv_today): #Check if we already have a file. If we don't already have a file, make one.
         #This means that the Json gets overwritten even if it's a new day! We don't need yesterday's json.
         df = pd.DataFrame(columns = ['id','name','current_wait','wait_ratio','lat','lon','park','single_rider','lightning_lane','individual_lightning_lane'])
-        appendRides(df,dis_waits_json)
-        appendRides(df,dca_waits_json)
+        df = appendRides(df,dis_waits_json)
+        df = appendRides(df,dca_waits_json)
         df = addLatLon(df)
     else:
         df = pd.read_csv(waits_csv_today,encoding='latin1')
@@ -124,10 +124,10 @@ def main():
     df[next_col_name] = ''
     #create a new column with the date/time
 
-    addWaitTimes(df,dis_waits_json,next_col_name)
-    addWaitTimes(df,dca_waits_json,next_col_name) #these two amend the latest wait times to the newest column
+    df = addWaitTimes(df,dis_waits_json,next_col_name)
+    df = addWaitTimes(df,dca_waits_json,next_col_name) #these two amend the latest wait times to the newest column
 
-    updateWaitRatio(df)
+    df = updateWaitRatio(df)
 
     #wait until the next five minutes - should start at a given time for consistency
     with open (waits_csv_today,'w') as waitfile:
