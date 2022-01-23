@@ -72,7 +72,8 @@ def updateWaitRatio():
 
 def addLatLon(): #also correct ride names for formatting
     global df
-    lat_lon = pd.read_csv("C:/Users/Asher/Desktop/Python/dis_time_db/disney_ride_lat_lon.csv")
+    lat_lon_csv = requests.get('http://stuhlman.net/genieminus/disney_ride_lat_lon.csv')
+    lat_lon = pd.read_csv(lat_lon_csv)
     for row in lat_lon.itertuples(): #import latitude and longitude
         df.loc[df.id==row.id,"name"] = row.truename
         df.loc[df.id==row.id,"lat"] = row.lat
