@@ -82,56 +82,57 @@ def addLatLon(): #also correct ride names for formatting
         df.loc[df.id==row.id,"lightning_lane"] = row.lightning_lane
         df.loc[df.id==row.id,"individual_lightning_lane"] = row.individual_lightning_lane
 
-now = datetime.datetime.now(pytz.timezone("US/Pacific")) #Disneyland timezone
-if (now.hour < 8) or (now.hour == 23 and now.minute > 55):
-    exit() #Don't run except between 8-midnight
+def main():
+    now = datetime.datetime.now(pytz.timezone("US/Pacific")) #Disneyland timezone
+    if (now.hour < 8) or (now.hour == 23 and now.minute > 55):
+        exit() #Don't run except between 8-midnight
 
-dis_waits_json = requests.get('https://queue-times.com/en-US/parks/16/queue_times.json').json()
-dca_waits_json = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json').json()
-
-waits_csv_today = 'disney_waits_' + str(now.month) + "-" + str(now.day) + ".csv"
-waits_json_today = '/js/ride_data_x.js'
-date_js_today = '/js/update_date.js'
-
-if not os.path.exists(waits_csv_today): #Check if we already have a file. If we don't already have a file, make one.
-    #This means that the Json gets overwritten even if it's a new day! We don't need yesterday's json.
-    df = pd.DataFrame(columns = ['id','name','current_wait','wait_ratio','lat','lon','park','single_rider','lightning_lane','individual_lightning_lane'])
-    appendRides(dis_waits_json)
-    appendRides(dca_waits_json)
-    addLatLon()
-else:
-    df = pd.read_csv(waits_csv_today,encoding='latin1')
-
-print(df)
-
-try:    
     dis_waits_json = requests.get('https://queue-times.com/en-US/parks/16/queue_times.json').json()
     dca_waits_json = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json').json()
-except: #should be a specific exception - it's an exception if the json doesn't load
-    print("Oops - couldn't update wait times from API!")
-next_check = datetime.now()
 
-if (now.minute) < 10:
-    minute_now = "0" + str(now.minute)
-else:
-    minute_now = str(now.minute) #make sure the minute has two digits so we can sort by minute
+    waits_csv_today = 'disney_waits_' + str(now.month) + "-" + str(now.day) + ".csv"
+    waits_json_today = '/js/ride_data_x.js'
+    date_js_today = '/js/update_date.js'
 
-next_col_name = "z" + str(next_check.year) + "-" + str(next_check.month) + "-" + str(next_check.day) + "-" + str(next_check.hour) + "-" + minute_now #create a new column with the current time
-df[next_col_name] = ''
-#create a new column with the date/time
+    if not os.path.exists(waits_csv_today): #Check if we already have a file. If we don't already have a file, make one.
+        #This means that the Json gets overwritten even if it's a new day! We don't need yesterday's json.
+        df = pd.DataFrame(columns = ['id','name','current_wait','wait_ratio','lat','lon','park','single_rider','lightning_lane','individual_lightning_lane'])
+        appendRides(dis_waits_json)
+        appendRides(dca_waits_json)
+        addLatLon()
+    else:
+        df = pd.read_csv(waits_csv_today,encoding='latin1')
 
-addWaitTimes(dis_waits_json,next_col_name)
-addWaitTimes(dca_waits_json,next_col_name) #these two amend the latest wait times to the newest column
+    print(df)
 
-updateWaitRatio()
+    try:    
+        dis_waits_json = requests.get('https://queue-times.com/en-US/parks/16/queue_times.json').json()
+        dca_waits_json = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json').json()
+    except: #should be a specific exception - it's an exception if the json doesn't load
+        print("Oops - couldn't update wait times from API!")
+    next_check = datetime.now()
 
-#wait until the next five minutes - should start at a given time for consistency
-with open (waits_csv_today,'w') as waitfile:
-    waitfile.write(df.to_csv(index=False, line_terminator='\n',encoding='latin1'))
-with open (waits_json_today,'w') as waitfile:
-    js_to_write = df.to_json()
-    js_to_write = js_to_write.replace("'","")
-    js_to_write = "rdata = '[" + js_to_write + "]';"
-    waitfile.write(js_to_write) #needs to add " rdata = '[  " at the top, and end in "    ]';   ", and remove all apostrophes
-with open(date_js_today,'w') as datefile:
-    datefile.write("updated = '" + str(next_check.hour) + ":" + minute_now + ", " + str(next_check.month) + "/" + str(next_check.day)+"'")
+    if (now.minute) < 10:
+        minute_now = "0" + str(now.minute)
+    else:
+        minute_now = str(now.minute) #make sure the minute has two digits so we can sort by minute
+
+    next_col_name = "z" + str(next_check.year) + "-" + str(next_check.month) + "-" + str(next_check.day) + "-" + str(next_check.hour) + "-" + minute_now #create a new column with the current time
+    df[next_col_name] = ''
+    #create a new column with the date/time
+
+    addWaitTimes(dis_waits_json,next_col_name)
+    addWaitTimes(dca_waits_json,next_col_name) #these two amend the latest wait times to the newest column
+
+    updateWaitRatio()
+
+    #wait until the next five minutes - should start at a given time for consistency
+    with open (waits_csv_today,'w') as waitfile:
+        waitfile.write(df.to_csv(index=False, line_terminator='\n',encoding='latin1'))
+    with open (waits_json_today,'w') as waitfile:
+        js_to_write = df.to_json()
+        js_to_write = js_to_write.replace("'","")
+        js_to_write = "rdata = '[" + js_to_write + "]';"
+        waitfile.write(js_to_write) #needs to add " rdata = '[  " at the top, and end in "    ]';   ", and remove all apostrophes
+    with open(date_js_today,'w') as datefile:
+        datefile.write("updated = '" + str(next_check.hour) + ":" + minute_now + ", " + str(next_check.month) + "/" + str(next_check.day)+"'")
