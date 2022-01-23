@@ -72,7 +72,8 @@ def updateWaitRatio():
 
 def addLatLon(): #also correct ride names for formatting
     global df
-    lat_lon_csv = requests.get('http://stuhlman.net/genieminus/disney_ride_lat_lon.csv')
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0"}
+    lat_lon_csv = requests.get('http://stuhlman.net/genieminus/disney_ride_lat_lon.csv',headers=headers)
     lat_lon = pd.read_csv(lat_lon_csv)
     for row in lat_lon.itertuples(): #import latitude and longitude
         df.loc[df.id==row.id,"name"] = row.truename
@@ -88,8 +89,9 @@ def main():
     if (now.hour < 8) or (now.hour == 23 and now.minute > 55):
         exit() #Don't run except between 8-midnight
 
-    dis_waits_json = requests.get('https://queue-times.com/en-US/parks/16/queue_times.json').json()
-    dca_waits_json = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json').json()
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0"}
+    dis_waits_json = requests.get('https://queue-times.com/en-US/parks/16/queue_times.json',headers=headers).json()
+    dca_waits_json = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json',headers=headers).json()
 
     waits_csv_today = 'disney_waits_' + str(now.month) + "-" + str(now.day) + ".csv"
     waits_json_today = '/js/ride_data_x.js'
