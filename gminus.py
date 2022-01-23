@@ -95,8 +95,8 @@ def main():
     dca_waits_json = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json',headers=headers).json()
 
     waits_csv_today = 'disney_waits_' + str(now.month) + "-" + str(now.day) + ".csv"
-    waits_json_today = '/js/ride_data_x.js'
-    date_js_today = '/js/update_date.js'
+    waits_json_today = 'js/ride_data_x.js'
+    date_js_today = 'js/update_date.js'
 
     if not os.path.exists(waits_csv_today): #Check if we already have a file. If we don't already have a file, make one.
         #This means that the Json gets overwritten even if it's a new day! We don't need yesterday's json.
