@@ -93,6 +93,8 @@ def main():
     dis_waits_json = requests.get('https://queue-times.com/en-US/parks/16/queue_times.json',headers=headers).json()
     dca_waits_json = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json',headers=headers).json()
 
+    print(dis_waits_json)
+
     waits_csv_today = 'disney_waits_' + str(now.month) + "-" + str(now.day) + ".csv"
     waits_json_today = '/js/ride_data_x.js'
     date_js_today = '/js/update_date.js'
