@@ -84,7 +84,7 @@ def addLatLon(): #also correct ride names for formatting
         df.loc[df.id==row.id,"individual_lightning_lane"] = row.individual_lightning_lane
 
 def main():
-    now = datetime.datetime.now(pytz.timezone("US/Pacific")) #Disneyland timezone
+    now = datetime.now(pytz.timezone("US/Pacific")) #Disneyland timezone
     if (now.hour < 8) or (now.hour == 23 and now.minute > 55):
         exit() #Don't run except between 8-midnight
 
