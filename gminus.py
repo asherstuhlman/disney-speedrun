@@ -106,16 +106,8 @@ def main():
         df = addLatLon(df)
     else:
         df = pd.read_csv(waits_csv_today,encoding='latin1')
-
-    print(df)
-
-    try:    
-        dis_waits_json = requests.get('https://queue-times.com/en-US/parks/16/queue_times.json').json()
-        dca_waits_json = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json').json()
-    except: #should be a specific exception - it's an exception if the json doesn't load
-        print("Oops - couldn't update wait times from API!")
-    next_check = datetime.now()
-
+    
+    next_check = datetime.now() #MISNAMED RIGHT NOW
     if (now.minute) < 10:
         minute_now = "0" + str(now.minute)
     else:
