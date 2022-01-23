@@ -137,3 +137,5 @@ def main():
         waitfile.write(js_to_write) #needs to add " rdata = '[  " at the top, and end in "    ]';   ", and remove all apostrophes
     with open(date_js_today,'w') as datefile:
         datefile.write("updated = '" + str(next_check.hour) + ":" + minute_now + ", " + str(next_check.month) + "/" + str(next_check.day)+"'")
+
+main()
