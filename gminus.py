@@ -120,7 +120,7 @@ def main():
             df = appendRides(df,dca_waits_json)
             df = addLatLon(df)
         else:
-            df = pd.read_csv('http://stuhlman.net/gminus/js/disney_waits_1-24.csv', encoding='latin1')
+            df = pd.read_csv('http://stuhlman.net/gminus/js/ride_data.csv', encoding='latin1')
 
         if (now.minute) < 10:
             minute_now = "0" + str(now.minute)
