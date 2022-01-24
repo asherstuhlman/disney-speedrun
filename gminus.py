@@ -94,6 +94,7 @@ def save_js_remotely(filename,file):
     ftpResponseMessage = ftp.cwd("/public_html/gminus/js");
     print(ftpResponseMessage)
 
+    storCommand = "STOR "+str(filename)
     ftpResponseMessage = ftp.storbinary("STOR "+filename,file)
     print(ftpResponseMessage)
 
@@ -161,8 +162,8 @@ def main():
         date_txt = month_now + "/" + day_now
 
         #save_js_remotely("ride_data.csv",waitfile) 
-        save_js_remotely("ride_data_x.js",waitfile)
         save_js_remotely("update_date.js",datefile)
+        save_js_remotely("ride_data_x.js",js_waitfile)
         save_js_remotely("update_date.txt",date_txt)
         print("Files saved, sleeping")
         sleep(300)
