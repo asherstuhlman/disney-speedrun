@@ -88,12 +88,12 @@ def save_js_remotely(filename,file):
     myPassword = os.environ['js_pw']
 
     ftp = ftplib.FTP(myHostname)
+    ftp.set_debuglevel(2)
     ftp.login(myUsername,myPassword)
 
     ftpResponseMessage = ftp.cwd("/public_html/gminus/js");
     print(ftpResponseMessage)
-    print(filename)
-    print(file)
+
     ftpResponseMessage = ftp.storbinary(filename,file)
     print(ftpResponseMessage)
 
