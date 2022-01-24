@@ -94,12 +94,10 @@ def save_js_remotely(filename,file):
     ftpResponseMessage = ftp.cwd("/public_html/gminus/js");
     print(ftpResponseMessage)
 
-    #save a local version of the file
-    with open (filename,'a+') as file_to_ftp:
-        file_to_ftp.write(file)
-        print("Wrote file " + filename)
-        ftpResponseMessage = ftp.storbinary("STOR "+filename,filename)
-        print(ftpResponseMessage)
+    file_to_ftp = io.BytesIO(file.encode('utf-8'))
+    
+    ftpResponseMessage = ftp.storbinary("STOR "+filename,file_to_ftp)
+    print(ftpResponseMessage)
 
     ftp.quit()
 
