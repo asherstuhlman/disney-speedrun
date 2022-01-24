@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 from time import sleep
-from tkinter import E
 import requests
 import pandas as pd
 import os
