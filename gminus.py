@@ -5,6 +5,8 @@ import pandas as pd
 import os
 import pytz
 import io
+import ftplib
+from boto.s3.connection import S3Connection
 
 #this is the version for the web
 #it runs on a cronjob every 5 minutes
@@ -80,6 +82,22 @@ def addLatLon(df): #also correct ride names for formatting
         df.loc[df.id==row.id,"individual_lightning_lane"] = row.individual_lightning_lane
     return df
 
+def save_js_remotely(filename,file):
+    myHostname = "ftp.stuhlman.net"
+    myUsername = 'stuhazjf'
+    myPassword = S3Connection(os.environ['js_pw'])
+
+    ftp = ftplib.FTP(myHostname)
+    ftp.login(myUsername,myPassword)
+
+    ftpResponseMessage = ftp.cwd("/public_html/genieminus/js");
+    print(ftpResponseMessage)
+    ftpResponseMessage = ftp.storbinary(filename,file)
+    print(ftpResponseMessage)
+
+    ftp.quit()
+
+
 def main():
     while True:
         now = datetime.now(pytz.timezone("US/Pacific")) #Disneyland timezone
@@ -128,6 +146,9 @@ def main():
             waitfile.write(js_to_write) #needs to add " rdata = '[  " at the top, and end in "    ]';   ", and remove all apostrophes
         with open(date_js_today,'w') as datefile:
             datefile.write("updated = '" + str(next_check.hour) + ":" + minute_now + ", " + str(next_check.month) + "/" + str(next_check.day)+"'")
+
+        save_js_remotely("ride_data_x.js",waitfile)
+        save_js_remotely("update_date.js",datefile)
 
         sleep(300)
 
