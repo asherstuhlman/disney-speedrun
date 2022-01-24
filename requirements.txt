@@ -3,5 +3,4 @@ requests
 pandas
 pytz
 gunicorn
-ftplib
 boto
