@@ -108,8 +108,9 @@ def main():
         headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0"}
         dis_waits_json = requests.get('https://queue-times.com/en-US/parks/16/queue_times.json',headers=headers).json()
         dca_waits_json = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json',headers=headers).json()
-
-        waits_csv_today = pd.read_csv('http://stuhlman.net/gminus/js/ride_data_x.csv')
+        waits_req = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json',headers=headers)
+        waits_data = StringIO(waits_req.text)
+        waits_csv_today = pd.read_csv(waits_data)
         
         last_updated = requests.get('http://stuhlman.net/gminus/js/update_date.txt').content[3:5] #get the day
 
