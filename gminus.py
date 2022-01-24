@@ -90,7 +90,7 @@ def save_js_remotely(filename,file):
     ftp = ftplib.FTP(myHostname)
     ftp.login(myUsername,myPassword)
 
-    ftpResponseMessage = ftp.cwd("/public_html/genieminus/js");
+    ftpResponseMessage = ftp.cwd("/public_html/gminus/js");
     print(ftpResponseMessage)
     ftpResponseMessage = ftp.storbinary(filename,file)
     print(ftpResponseMessage)
@@ -99,6 +99,7 @@ def save_js_remotely(filename,file):
 
 
 def main():
+    print("Hello!")
     while True:
         now = datetime.now(pytz.timezone("US/Pacific")) #Disneyland timezone
         if (now.hour < 8) or (now.hour == 23 and now.minute > 55):
