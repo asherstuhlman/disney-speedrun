@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from time import sleep
+from tkinter import E
 import requests
 import pandas as pd
 import os
@@ -109,48 +110,59 @@ def main():
         dis_waits_json = requests.get('https://queue-times.com/en-US/parks/16/queue_times.json',headers=headers).json()
         dca_waits_json = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json',headers=headers).json()
 
-        waits_csv_today = 'disney_waits_' + str(now.month) + "-" + str(now.day) + ".csv"
-        waits_json_today = 'js/ride_data_x.js'
-        date_js_today = 'js/update_date.js'
+        waits_csv_today = pd.read_csv('http://stuhlman.net/gminus/js/ride_data_x.csv')
+        
+        last_updated = requests.get('http://stuhlman.net/gminus/js/update_date.txt').content[3:5] #get the day
 
-        if not os.path.exists(waits_csv_today): #Check if we already have a file. If we don't already have a file, make one.
-            #This means that the Json gets overwritten even if it's a new day! We don't need yesterday's json.
+        if last_updated != now.day:
             df = pd.DataFrame(columns = ['id','name','current_wait','wait_ratio','lat','lon','park','single_rider','lightning_lane','individual_lightning_lane'])
             df = appendRides(df,dis_waits_json)
             df = appendRides(df,dca_waits_json)
             df = addLatLon(df)
         else:
-            df = pd.read_csv(waits_csv_today,encoding='latin1')
-        
-        next_check = datetime.now() #MISNAMED RIGHT NOW
+            df = waits_csv_today
+
         if (now.minute) < 10:
             minute_now = "0" + str(now.minute)
         else:
             minute_now = str(now.minute) #make sure the minute has two digits so we can sort by minute
 
-        next_col_name = "z" + str(next_check.year) + "-" + str(next_check.month) + "-" + str(next_check.day) + "-" + str(next_check.hour) + "-" + minute_now #create a new column with the current time
+        next_col_name = "z" + str(now.year) + "-" + str(now.month) + "-" + str(now.day) + "-" + str(now.hour) + "-" + minute_now #create a new column with the current time
         df[next_col_name] = ''
         #create a new column with the date/time
 
         df = addWaitTimes(df,dis_waits_json,next_col_name)
         df = addWaitTimes(df,dca_waits_json,next_col_name) #these two amend the latest wait times to the newest column
-
         df = updateWaitRatio(df)
 
-        #wait until the next five minutes - should start at a given time for consistency
-        with open (waits_csv_today,'w') as waitfile:
-            waitfile.write(df.to_csv(index=False, line_terminator='\n',encoding='latin1'))
-        with open (waits_json_today,'w') as waitfile:
-            js_to_write = df.to_json()
-            js_to_write = js_to_write.replace("'","")
-            js_to_write = "rdata = '[" + js_to_write + "]';"
-            waitfile.write(js_to_write) #needs to add " rdata = '[  " at the top, and end in "    ]';   ", and remove all apostrophes
-        with open(date_js_today,'w') as datefile:
-            datefile.write("updated = '" + str(next_check.hour) + ":" + minute_now + ", " + str(next_check.month) + "/" + str(next_check.day)+"'")
+        #convert the dataframe to json
+        #with open (waits_csv_today,'w') as waitfile:
+        waitfile = (df.to_csv(index=False, line_terminator='\n',encoding='latin1'))
 
+        #create a javascript text with wait times
+        js_waitfile = df.to_json()
+        js_waitfile = js_waitfile.replace("'","")
+        js_waitfile = "rdata = '[" + js_waitfile + "]';"
+
+        #create a json w/ date
+        datefile = "updated = '" + str(now.hour) + ":" + minute_now + ", " + str(now.month) + "/" + str(now.day)+"'"
+
+        #generate a text file for last day updated
+        if (now.month) < 10:
+            month_now = "0" + str(now.month)
+        else:
+            month_now = str(now.month)
+        if (now.day) < 10:
+            day_now = "0" + str(now.day)
+        else:
+            day_now = str(now.day)
+        date_txt = month_now + "/" + day_now
+
+        #save_js_remotely("ride_data.csv",waitfile) 
         save_js_remotely("ride_data_x.js",waitfile)
         save_js_remotely("update_date.js",datefile)
-
+        save_js_remotely("update_date.txt",date_txt)
+        print("Files saved, sleeping")
         sleep(300)
 
 main()
