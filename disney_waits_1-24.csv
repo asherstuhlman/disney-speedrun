@@ -1,0 +1,80 @@
+id,name,current_wait,wait_ratio,lat,lon,park,single_rider,lightning_lane,individual_lightning_lane,z2022-1-24-11-33
+288,Enchanted Tiki Room,0,1,,,,,,,0
+326,Indiana Jones Adventure,15,1,33.8111911679387,-117.920525119537,DL,No,Yes,No,15
+296,Jungle Cruise,5,1,33.8114649849637,-117.920124080432,DL,No,No,No,5
+689,Tarzan's Treehouse,0,1,,,,,,,0
+304,Davy Crockett Explorer Canoes,10,1,33.8124961323431,-117.922071431924,DL,No,No,No,10
+297,Splash Mountain,0,1,33.8121843772014,-117.922438024883,DL,Yes,Yes,No,0
+306,The Many Adventures of Winnie the Pooh,5,1,33.8125378704574,-117.92314243479,DL,No,No,No,5
+285,Alice in Wonderland,20,1,33.813294284361,-117.918272879781,DL,No,No,No,20
+303,Casey Jr Circus Train,0,1,33.8137789282873,-117.919165067388,DL,No,No,No,0
+275,Dumbo,15,1,33.8137273807927,-117.918943472834,DL,No,No,No,15
+307,its a small world,0,1,33.8146429978975,-117.917807632198,DL,No,Yes,No,0
+277,King Arthur Carrousel,5,1,33.8134784462389,-117.918941418354,DL,No,No,No,5
+278,Mad Tea Party,5,1,33.8135271691034,-117.918336955145,DL,No,No,No,5
+279,Matterhorn Bobsleds,10,1,33.8132837878514,-117.91781544094,DL,Yes,Yes,No,10
+280,Mr Toads Wild Ride,5,1,33.8133872569348,-117.918747980146,DL,No,No,No,5
+281,Peter Pans Flight,5,1,33.8131227678868,-117.918856220483,DL,No,No,No,5
+282,Pinocchios Daring Journey,5,1,33.8133903702211,-117.919259438176,DL,No,No,No,5
+687,Sleeping Beauty Castle Walkthrough,0,1,,,,,,,0
+283,Snow Whites Enchanted Wish,10,1,33.8131542510878,-117.919164708867,DL,No,No,No,10
+305,Storybook Land Canal Boats,5,1,33.8136456384136,-117.918260934846,DL,No,No,No,5
+323,Big Thunder Mountain Railroad,5,1,33.8126615516382,-117.920371126782,DL,No,Yes,No,5
+679,Frontierland Shootin' Exposition,0,1,,,,,,,0
+456,Mark Twain Riverboat,0,1,,,,,,,0
+331,Pirate's Lair on Tom Sawyer Island,0,1,,,,,,,0
+328,Sailing Ship Columbia,0,1,33.8122948987511,-117.920549168324,DL,No,No,No,0
+674,"Disneyland Railroad - Main Street, U.S.A.",10,1,,,,,,,10
+6114,Fortune Tellers,0,1,,,,,,,0
+686,Main Street Cinema,0,1,,,,,,,0
+691,Main Street Vehicles,0,1,33.8101932661244,-117.918977708556,DL,No,No,No,0
+695,The Disney Gallery,0,1,,,,,,,0
+690,The Disneyland Story presenting Great Moments with Mr. Lincoln,0,1,,,,,,,0
+673,Chip 'n Dale Treehouse,0,1,,,,,,,0
+677,Donald's Boat,0,1,,,,,,,0
+324,Gadgets Go Coaster,5,1,33.815253807635,-117.919351410747,DL,No,No,No,5
+680,Goofy's Playhouse,0,1,,,,,,,0
+327,Mickey's House and Meet Mickey,0,1,,,,,,,0
+684,Minnie's House,0,1,,,,,,,0
+332,Roger Rabbits Car Toon Spin,0,1,33.815204678015,-117.918092231814,DL,No,Yes,No,0
+325,Haunted Mansion,0,1,33.8117847155918,-117.922164604746,DL,No,Yes,No,0
+289,Pirates of the Caribbean,5,1,33.8113051192015,-117.92083294744,DL,No,No,No,5
+6339,Millennium Falcon Smugglers Run,20,1,33.8149052656419,-117.921412222266,DL,Yes,Yes,No,20
+6712,Star Wars: Galaxy's Edge,0,1,,,,,,,0
+6340,Rise of the Resistance,105,1,33.8137284211575,-117.923408698299,DL,No,No,No,105
+287,Astro Orbitor,5,1,33.812184077055,-117.91826053864,DL,No,No,No,5
+317,Autopia,5,1,33.8126341169474,-117.916386725255,DL,No,Yes,No,5
+273,Buzz Lightyear Astro Blasters,5,1,33.8122837654712,-117.918065602539,DL,No,Yes,No,5
+274,Disneyland Monorail,5,1,,,,,,,5
+276,Finding Nemo Submarine Voyage,0,1,,,,,,,0
+284,Space Mountain,30,1,33.8110558243664,-117.917498867894,DL,No,Yes,No,30
+286,Star Tours,5,1,33.8120566850492,-117.918089028743,DL,No,Yes,No,5
+2520,Star Wars Launch Bay,0,1,,,,,,,0
+329,Guardians of the Galaxy Mission BREAKOUT,20,1,33.8069173974994,-117.917127640102,DCA,No,Yes,No,20
+8843,WEB SLINGERS A Spider Man Adventure ,60,1,33.8068330481172,-117.918865082878,DCA,No,No,Yes,60
+873,Red Car Trolley - Buena Vista Street,0,1,,,,,,,0
+2608,Luigis Rollickin Roadsters ,5,1,33.8054769582633,-117.918224766888,DCA,No,No,No,5
+315,Maters Junkyard Jamboree ,0,1,33.8064794286674,-117.919224284528,DCA,No,No,No,0
+295,Radiator Springs Racers ,60,1,33.8047898719417,-117.919042999505,DCA,Yes,No,Yes,60
+302,Grizzly River Run ,0,1,33.8069101305767,-117.920931385972,DCA,Yes,Yes,No,0
+293,Redwood Creek Challenge Trail,0,1,,,,,,,0
+312,Soarin Around the World ,35,1,33.8083642824592,-117.920222975606,DCA,No,Yes,No,35
+321,Animation Academy,0,1,,,,,,,0
+6440,Mickey's PhilharMagic,0,1,,,,,,,0
+291,Monsters Inc Mike and Sulley to the Rescue,5,1,33.8084030939628,-117.91729838521,DCA,No,Yes,No,5
+868,Sorcerer's Workshop,0,1,,,,,,,0
+294,Turtle Talk with Crush,0,1,,,,,,,0
+9006,The Bakery Tour,0,1,,,,,,,0
+870,Walt Disney Imagineering Blue Sky Cellar ,0,1,,,,,,,0
+9005,Games of Pixar Pier,0,1,,,,,,,0
+298,Golden Zephyr ,5,1,33.8060150545895,-117.922268316763,DCA,No,No,No,5
+319,Goofys Sky School ,5,1,33.8063797077954,-117.922868691659,DCA,Yes,Yes,No,5
+322,Incredicoaster ,5,1,33.8046545919678,-117.920510965499,DCA,Yes,Yes,No,5
+6643,Inside Out Emotional Whirlwind ,5,1,33.8052685611164,-117.922832467414,DCA,No,No,No,5
+300,Jumpin Jellyfish ,5,1,33.8060681225906,-117.922700477495,DCA,No,No,No,5
+310,Jessies Critter Carousel ,5,1,33.8046582713486,-117.921216654644,DCA,No,No,No,5
+311,Mickey's Fun Wheel,5,1,,,,,,,5
+5557,Pixar Pal A Round,5,1,33.8051588861746,-117.922289605416,DCA,No,No,No,5
+301,Silly Symphony Swings,5,1,33.8056400397256,-117.922847369558,DCA,No,No,No,5
+316,The Little Mermaid Ariels Undersea Adventure ,0,1,33.8062167128385,-117.92109105128,DCA,No,No,No,0
+313,Toy Story Midway Mania,5,1,33.8046181876502,-117.921670871156,DCA,No,Yes,No,5
