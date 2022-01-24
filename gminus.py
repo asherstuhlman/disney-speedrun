@@ -95,8 +95,9 @@ def save_js_remotely(filename,file):
     print(ftpResponseMessage)
 
     #save a local version of the file
-    with open (filename,'w') as file_to_ftp:
+    with open (filename,'a+') as file_to_ftp:
         file_to_ftp.write(file)
+        print("Wrote file" + filename)
         ftpResponseMessage = ftp.storbinary("STOR "+filename,file_to_ftp)
         print(ftpResponseMessage)
 
