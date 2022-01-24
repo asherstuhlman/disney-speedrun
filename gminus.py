@@ -109,7 +109,7 @@ def main():
         dis_waits_json = requests.get('https://queue-times.com/en-US/parks/16/queue_times.json',headers=headers).json()
         dca_waits_json = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json',headers=headers).json()
         waits_req = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json',headers=headers)
-        waits_data = StringIO(waits_req.text)
+        waits_data = io.StringIO(waits_req.text)
         waits_csv_today = pd.read_csv(waits_data)
         
         last_updated = requests.get('http://stuhlman.net/gminus/js/update_date.txt').content[3:5] #get the day
