@@ -94,8 +94,8 @@ def save_js_remotely(filename,file):
     ftpResponseMessage = ftp.cwd("/public_html/gminus/js");
     print(ftpResponseMessage)
 
-    storCommand = "STOR "+str(filename)
-    ftpResponseMessage = ftp.storbinary("STOR "+filename,file)
+    file_to_ftp = io.BytesIO(file)
+    ftpResponseMessage = ftp.storbinary("STOR "+filename,file_to_ftp)
     print(ftpResponseMessage)
 
     ftp.quit()
