@@ -85,7 +85,7 @@ def addLatLon(df): #also correct ride names for formatting
 def save_js_remotely(filename,file):
     myHostname = "ftp.stuhlman.net"
     myUsername = 'stuhazjf'
-    myPassword = S3Connection(os.environ['js_pw'])
+    myPassword = os.environ['js_pw']
 
     ftp = ftplib.FTP(myHostname)
     ftp.login(myUsername,myPassword)
