@@ -112,19 +112,15 @@ def main():
         headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0"}
         dis_waits_json = requests.get('https://queue-times.com/en-US/parks/16/queue_times.json',headers=headers).json()
         dca_waits_json = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json',headers=headers).json()
-        waits_req = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json',headers=headers)
-        waits_data = io.StringIO(waits_req.text)
-        waits_csv_today = pd.read_csv(waits_data)
-        
         last_updated = requests.get('http://stuhlman.net/gminus/js/update_date.txt').content[3:5] #get the day
 
-        if last_updated != now.day:
+        if int(last_updated) != now.day:
             df = pd.DataFrame(columns = ['id','name','current_wait','wait_ratio','lat','lon','park','single_rider','lightning_lane','individual_lightning_lane'])
             df = appendRides(df,dis_waits_json)
             df = appendRides(df,dca_waits_json)
             df = addLatLon(df)
         else:
-            df = waits_csv_today
+            df = pd.read_csv('http://stuhlman.net/gminus/js/disney_waits_1-24.csv', encoding='latin1')
 
         if (now.minute) < 10:
             minute_now = "0" + str(now.minute)
@@ -162,7 +158,7 @@ def main():
             day_now = str(now.day)
         date_txt = month_now + "/" + day_now
 
-        #save_js_remotely("ride_data.csv",waitfile) 
+        save_js_remotely("ride_data.csv",waitfile) 
         save_js_remotely("update_date.js",datefile)
         save_js_remotely("ride_data_x.js",js_waitfile)
         save_js_remotely("update_date.txt",date_txt)
