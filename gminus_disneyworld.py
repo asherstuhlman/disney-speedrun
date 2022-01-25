@@ -122,18 +122,13 @@ def main():
         mk_waits_json = requests.get('https://queue-times.com/en-US/parks/6/queue_times.json',headers=headers).json()
         dhs_waits_json = requests.get('https://queue-times.com/en-US/parks/7/queue_times.json',headers=headers).json()
         ak_waits_json = requests.get('https://queue-times.com/en-US/parks/8/queue_times.json',headers=headers).json()
-        last_updated_dw = requests.get('http://stuhlman.net/gminus/js/update_date_dw.txt').content[3:5] #get the day
         last_updated = requests.get('http://stuhlman.net/gminus/js/update_date.txt').content[3:5] #get the day
-
 
         if int(last_updated) != now.day:
             df = pd.DataFrame(columns = ['id','name','current_wait','wait_ratio','lat','lon','park','single_rider','lightning_lane','individual_lightning_lane'])
             df = appendRides(df,dis_waits_json)
             df = appendRides(df,dca_waits_json)
             df = addLatLon(df)
-        else:
-            df = pd.read_csv('http://stuhlman.net/gminus/js/ride_data.csv', encoding='utf-8')
-        if int(last_updated_dw) != now.day:
             df_dw = pd.DataFrame(columns = ['id','name','current_wait','wait_ratio','lat','lon','park','single_rider','lightning_lane','individual_lightning_lane'])
             df_dw = appendRides(df_dw,epcot_waits_json)
             df_dw = appendRides(df_dw,mk_waits_json)
@@ -141,6 +136,7 @@ def main():
             df_dw = appendRides(df_dw,ak_waits_json)
             df_dw = addLatLon(df_dw)
         else:
+            df = pd.read_csv('http://stuhlman.net/gminus/js/ride_data.csv', encoding='utf-8')
             df_dw = pd.read_csv('http://stuhlman.net/gminus/js/ride_data_dw.csv', encoding='utf-8')
 
         if (now.minute) < 10:
