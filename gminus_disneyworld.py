@@ -33,7 +33,7 @@ def addWaitTimes(df,json_file,next_col_name): #go through an update file and fil
 
 def updateWaitRatio(df):
     last_col = len(df.columns)
-    print(last_col)
+    print(df.itertuples())
     if last_col > 17: #if we have enough data points
         for row in df.itertuples():
             current_wait_time = df.iat[row[0],last_col-1]
@@ -154,6 +154,10 @@ def main():
         #create a new column with the date/time
 
         #amend the latest wait times to the newest column
+        df = addWaitTimes(df,dis_waits_json,next_col_name)
+        df = addWaitTimes(df,dca_waits_json,next_col_name)
+        df = updateWaitRatio(df)
+
         df_dw = addWaitTimes(df_dw,epcot_waits_json,next_col_name)
         df_dw = addWaitTimes(df_dw,mk_waits_json,next_col_name)
         df_dw = addWaitTimes(df_dw,dhs_waits_json,next_col_name)
