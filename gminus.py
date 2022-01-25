@@ -144,6 +144,7 @@ def main():
         #create a javascript text with wait times
         js_waitfile = df.to_json()
         js_waitfile = js_waitfile.replace("'","")
+        js_waitfile = js_waitfile.replace("\\u00c3\\u0083\\u00c2\\u0083",,"") #idk why but this garbage data keeps getting added so let's cut it out
         js_waitfile = "rdata = '[" + js_waitfile + "]';"
 
         #create a json w/ date
