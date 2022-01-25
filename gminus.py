@@ -104,64 +104,63 @@ def save_js_remotely(filename,file):
 
 def main():
     print("Hello!")
-    while True:
-        now = datetime.now(pytz.timezone("US/Pacific")) #Disneyland timezone
-        if (now.hour < 8) or (now.hour == 23 and now.minute > 55):
-            exit() #Don't run except between 8-midnight
+    now = datetime.now(pytz.timezone("US/Pacific")) #Disneyland timezone
+    if (now.hour < 8) or (now.hour == 23 and now.minute > 55):
+        exit() #Don't run except between 8-midnight
 
-        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0"}
-        dis_waits_json = requests.get('https://queue-times.com/en-US/parks/16/queue_times.json',headers=headers).json()
-        dca_waits_json = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json',headers=headers).json()
-        last_updated = requests.get('http://stuhlman.net/gminus/js/update_date.txt').content[3:5] #get the day
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0"}
+    dis_waits_json = requests.get('https://queue-times.com/en-US/parks/16/queue_times.json',headers=headers).json()
+    dca_waits_json = requests.get('https://queue-times.com/en-US/parks/17/queue_times.json',headers=headers).json()
+    last_updated = requests.get('http://stuhlman.net/gminus/js/update_date.txt').content[3:5] #get the day
 
-        if int(last_updated) != now.day:
-            df = pd.DataFrame(columns = ['id','name','current_wait','wait_ratio','lat','lon','park','single_rider','lightning_lane','individual_lightning_lane'])
-            df = appendRides(df,dis_waits_json)
-            df = appendRides(df,dca_waits_json)
-            df = addLatLon(df)
-        else:
-            df = pd.read_csv('http://stuhlman.net/gminus/js/ride_data.csv', encoding='latin1')
+    if int(last_updated) != now.day:
+        df = pd.DataFrame(columns = ['id','name','current_wait','wait_ratio','lat','lon','park','single_rider','lightning_lane','individual_lightning_lane'])
+        df = appendRides(df,dis_waits_json)
+        df = appendRides(df,dca_waits_json)
+        df = addLatLon(df)
+    else:
+        df = pd.read_csv('http://stuhlman.net/gminus/js/ride_data.csv', encoding='latin1')
 
-        if (now.minute) < 10:
-            minute_now = "0" + str(now.minute)
-        else:
-            minute_now = str(now.minute) #make sure the minute has two digits so we can sort by minute
+    if (now.minute) < 10:
+        minute_now = "0" + str(now.minute)
+    else:
+        minute_now = str(now.minute) #make sure the minute has two digits so we can sort by minute
 
-        next_col_name = "z" + str(now.year) + "-" + str(now.month) + "-" + str(now.day) + "-" + str(now.hour) + "-" + minute_now #create a new column with the current time
-        df[next_col_name] = ''
-        #create a new column with the date/time
+    next_col_name = "z" + str(now.year) + "-" + str(now.month) + "-" + str(now.day) + "-" + str(now.hour) + "-" + minute_now #create a new column with the current time
+    df[next_col_name] = ''
+    #create a new column with the date/time
 
-        df = addWaitTimes(df,dis_waits_json,next_col_name)
-        df = addWaitTimes(df,dca_waits_json,next_col_name) #these two amend the latest wait times to the newest column
-        df = updateWaitRatio(df)
+    df = addWaitTimes(df,dis_waits_json,next_col_name)
+    df = addWaitTimes(df,dca_waits_json,next_col_name) #these two amend the latest wait times to the newest column
+    df = updateWaitRatio(df)
 
-        #convert the dataframe to json
-        #with open (waits_csv_today,'w') as waitfile:
-        waitfile = (df.to_csv(index=False, line_terminator='\n',encoding='latin1'))
+    #convert the dataframe to json
+    #with open (waits_csv_today,'w') as waitfile:
+    waitfile = (df.to_csv(index=False, line_terminator='\n',encoding='latin1'))
 
-        #create a javascript text with wait times
-        js_waitfile = df.to_json()
-        js_waitfile = js_waitfile.replace("'","")
-        js_waitfile = "rdata = '[" + js_waitfile + "]';"
+    #create a javascript text with wait times
+    js_waitfile = df.to_json()
+    js_waitfile = js_waitfile.replace("'","")
+    js_waitfile = "rdata = '[" + js_waitfile + "]';"
 
-        #create a json w/ date
-        datefile = "updated = '" + str(now.hour) + ":" + minute_now + ", " + str(now.month) + "/" + str(now.day)+"'"
+    #create a json w/ date
+    datefile = "updated = '" + str(now.hour) + ":" + minute_now + ", " + str(now.month) + "/" + str(now.day)+"'"
 
-        #generate a text file for last day updated
-        if (now.month) < 10:
-            month_now = "0" + str(now.month)
-        else:
-            month_now = str(now.month)
-        if (now.day) < 10:
-            day_now = "0" + str(now.day)
-        else:
-            day_now = str(now.day)
-        date_txt = month_now + "/" + day_now
+    #generate a text file for last day updated
+    if (now.month) < 10:
+        month_now = "0" + str(now.month)
+    else:
+        month_now = str(now.month)
+    if (now.day) < 10:
+        day_now = "0" + str(now.day)
+    else:
+        day_now = str(now.day)
+    date_txt = month_now + "/" + day_now
 
-        save_js_remotely("ride_data.csv",waitfile) 
-        save_js_remotely("update_date.js",datefile)
-        save_js_remotely("ride_data_x.js",js_waitfile)
-        save_js_remotely("update_date.txt",date_txt)
-        print("Files saved, sleeping")
+    save_js_remotely("ride_data.csv",waitfile) 
+    save_js_remotely("update_date.js",datefile)
+    save_js_remotely("ride_data_x.js",js_waitfile)
+    save_js_remotely("update_date.txt",date_txt)
+    print("Files saved, sleeping")
 
 main()
