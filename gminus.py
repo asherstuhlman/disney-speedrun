@@ -120,7 +120,8 @@ def main():
             df = appendRides(df,dca_waits_json)
             df = addLatLon(df)
         else:
-            df = pd.read_csv('http://stuhlman.net/gminus/js/ride_data.csv', encoding='latin1')
+            #df = pd.read_csv('http://stuhlman.net/gminus/js/ride_data.csv', encoding='latin1')
+            df = pd.read_csv('http://stuhlman.net/gminus/js/ride_data.csv', encoding='utf-8')
 
         if (now.minute) < 10:
             minute_now = "0" + str(now.minute)
@@ -137,7 +138,8 @@ def main():
 
         #convert the dataframe to json
         #with open (waits_csv_today,'w') as waitfile:
-        waitfile = (df.to_csv(index=False, line_terminator='\n',encoding='latin1'))
+        #waitfile = (df.to_csv(index=False, line_terminator='\n',encoding='latin1'))
+        waitfile = (df.to_csv(index=False, line_terminator='\n',encoding='utf-8'))
 
         #create a javascript text with wait times
         js_waitfile = df.to_json()
