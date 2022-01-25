@@ -163,6 +163,5 @@ def main():
         save_js_remotely("ride_data_x.js",js_waitfile)
         save_js_remotely("update_date.txt",date_txt)
         print("Files saved, sleeping")
-        sleep(300)
 
 main()
