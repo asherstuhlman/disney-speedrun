@@ -70,7 +70,7 @@ def updateWaitRatio(df):
 
 def addLatLon(df): #also correct ride names for formatting
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0"}
-    lat_lon_csv = requests.get('http://stuhlman.net/genieminus/disney_ride_lat_lon.csv',headers=headers).text
+    lat_lon_csv = requests.get('http://stuhlman.net/gminus/disney_ride_lat_lon.csv',headers=headers).text
     lat_lon = pd.read_csv(io.StringIO(lat_lon_csv))
     for row in lat_lon.itertuples(): #import latitude and longitude
         df.loc[df.id==row.id,"name"] = row.truename
@@ -112,8 +112,8 @@ def main():
     for do_exactly_twice in range(2):
         print("Hello!")
         now = datetime.now(pytz.timezone("US/Pacific")) #Disneyland timezone
-        if (now.hour < 8) or (now.hour == 23 and now.minute > 55):
-            exit() #Don't run except between 8-midnight
+        if (now.hour < 5) or (now.hour == 23 and now.minute > 55):
+            exit() #Don't run except while a park is open
 
         headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0"}
         dis_waits_json = requests.get('https://queue-times.com/en-US/parks/16/queue_times.json',headers=headers).json()
