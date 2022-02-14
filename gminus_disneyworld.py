@@ -101,12 +101,37 @@ def save_js_remotely(filename,file):
 
     ftp.quit()
 
+def save_html_remotely(filename,file): #it's stupid that I have two different functions for this when _actually_ these functions save to separate locations and not based on filetype
+    myHostname = "ftp.stuhlman.net"
+    myUsername = 'stuhazjf'
+    myPassword = os.environ['js_pw']
+
+    ftp = ftplib.FTP(myHostname)
+    ftp.set_debuglevel(2)
+    ftp.login(myUsername,myPassword)
+
+    ftpResponseMessage = ftp.cwd("/public_html/gminus");
+    print(ftpResponseMessage)
+
+    file_to_ftp = io.BytesIO(file.encode('utf-8'))
+    
+    ftpResponseMessage = ftp.storbinary("STOR "+filename,file_to_ftp)
+    print(ftpResponseMessage)
+
+    ftp.quit()
+
 def clean_waits(df):
     js_waitfile = df.to_json()
     js_waitfile = js_waitfile.replace("'","") #remove apostrophes
     js_waitfile = js_waitfile.replace(r"\u00c3\u0083\u00c2\u0083","") #idk why but this garbage data keeps getting added so let's cut it out
     js_waitfile = "rdata = '[" + js_waitfile + "]';"
     return js_waitfile
+
+def rename_js_with_question_mark(htmlfile,datetxt): #TAKES IN AN HTML FILE and the date in text form to append
+    htmlfile = htmlfile.replace('js/update_data.js', 'js/update_data.js?'+datetxt) 
+    htmlfile = htmlfile.replace('js/ride_data.js', 'js/ride_data.js?'+datetxt)
+    return htmlfile
+
 
 def main():
     for do_exactly_twice in range(2):
@@ -182,6 +207,14 @@ def main():
             day_now = str(now.day)
         date_txt = month_now + "/" + day_now
 
+        #open gminus_html_template and add ?date_txt to js/update_date.js and js/ride_data.js
+        gminus_dw_html = requests.get("http://stuhlman.net/gminus/gminus_dw_template.html").text #GET THIS FILE
+        gminus_html = requests.get("http://stuhlman.net/gminus/gminus_template.html").text #GET THIS FILE FROM TEMPLATE
+        gminus_html = rename_js_with_question_mark(gminus_html,date_txt)
+        gminus_dw_html = rename_js_with_question_mark(gminus_dw_html,date_txt)
+        save_html_remotely("gminus.html",gminus_html)
+        save_html_remotely("gminus_dw.html",gminus_dw_html) 
+
         save_js_remotely("ride_data.csv",waitfile) 
         save_js_remotely("ride_data_dw.csv",waitfile_dw) 
         save_js_remotely("update_date.js",datefile)
@@ -190,6 +223,6 @@ def main():
         save_js_remotely("update_date.txt",date_txt)
         print("Files saved, sleeping")
         if (do_exactly_twice==0):
-            sleep(299) #we do this every 5 minutes, but it's scheduled for every 10 minutes, so we do it twice instead
+            sleep(297) #we do this every 5 minutes, but it's scheduled for every 10 minutes, so we do it twice instead
 
 main()
