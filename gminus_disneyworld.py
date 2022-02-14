@@ -33,11 +33,11 @@ def addWaitTimes(df,json_file,next_col_name): #go through an update file and fil
 
 def updateWaitRatio(df):
     last_col = len(df.columns)
-    print(df.itertuples())
+    #print(df.itertuples())
     if last_col > 17: #if we have enough data points
         for row in df.itertuples():
             current_wait_time = df.iat[row[0],last_col-1]
-            print(current_wait_time)
+            #print(current_wait_time)
             #last_6_column = df.iloc[[row[0]],-6:]
             recent_max = max(df.iat[row[0],last_col-1],df.iat[row[0],last_col-2],df.iat[row[0],last_col-3],df.iat[row[0],last_col-4],df.iat[row[0],last_col-5],df.iat[row[0],last_col-6],df.iat[row[0],last_col-7])   #should just be a slice of the df though
             recent_min = min(df.iat[row[0],last_col-1],df.iat[row[0],last_col-2],df.iat[row[0],last_col-3],df.iat[row[0],last_col-4],df.iat[row[0],last_col-5],df.iat[row[0],last_col-6],df.iat[row[0],last_col-7]) 
@@ -208,8 +208,8 @@ def main():
         date_txt = month_now + "/" + day_now
 
         #open gminus_html_template and add ?date_txt to js/update_date.js and js/ride_data.js
-        gminus_dw_html = requests.get("http://stuhlman.net/gminus/gminus_dw_template.html").text #GET THIS FILE
         gminus_html = requests.get("http://stuhlman.net/gminus/gminus_template.html").text #GET THIS FILE FROM TEMPLATE
+        gminus_dw_html = requests.get("http://stuhlman.net/gminus/gminus_dw_template.html").text #GET THIS FILE
         gminus_html = rename_js_with_question_mark(gminus_html,date_txt)
         gminus_dw_html = rename_js_with_question_mark(gminus_dw_html,date_txt)
         save_html_remotely("gminus.html",gminus_html)
