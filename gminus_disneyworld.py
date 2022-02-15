@@ -128,7 +128,7 @@ def clean_waits(df):
     return js_waitfile
 
 def rename_js_with_question_mark(htmlfile,datetxt): #TAKES IN AN HTML FILE and the date in text form to append
-    htmlfile2 = htmlfile.replace('js/update_data.js', 'js/update_data.js?'+datetxt) 
+    htmlfile2 = htmlfile.replace('js/update_date.js', 'js/update_date.js?'+datetxt) 
     htmlfile3 = htmlfile2.replace('js/ride_data.js', 'js/ride_data.js?'+datetxt)
     return htmlfile3
 
