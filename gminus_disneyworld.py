@@ -128,9 +128,9 @@ def clean_waits(df):
     return js_waitfile
 
 def rename_js_with_question_mark(htmlfile,datetxt): #TAKES IN AN HTML FILE and the date in text form to append
-    htmlfile = htmlfile.replace('js/update_data.js', 'js/update_data.js?'+datetxt) 
-    htmlfile = htmlfile.replace('js/ride_data.js', 'js/ride_data.js?'+datetxt)
-    return htmlfile
+    htmlfile2 = htmlfile.replace('js/update_data.js', 'js/update_data.js?'+datetxt) 
+    htmlfile3 = htmlfile2.replace('js/ride_data.js', 'js/ride_data.js?'+datetxt)
+    return htmlfile3
 
 
 def main():
@@ -206,12 +206,13 @@ def main():
         else:
             day_now = str(now.day)
         date_txt = month_now + "/" + day_now
+        date_append_js = str(now.hour) + "-" + minute_now + "-" + str(now.month) + "-" + str(now.day)+"-"
 
         #open gminus_html_template and add ?date_txt to js/update_date.js and js/ride_data.js
         gminus_html = requests.get("http://stuhlman.net/gminus/gminus_template.html").text #GET THIS FILE FROM TEMPLATE
         gminus_dw_html = requests.get("http://stuhlman.net/gminus/gminus_dw_template.html").text #GET THIS FILE
-        gminus_html = rename_js_with_question_mark(gminus_html,date_txt)
-        gminus_dw_html = rename_js_with_question_mark(gminus_dw_html,date_txt)
+        gminus_html = rename_js_with_question_mark(gminus_html,date_append_js)
+        gminus_dw_html = rename_js_with_question_mark(gminus_dw_html,date_append_js)
         save_html_remotely("gminus.html",gminus_html)
         save_html_remotely("gminus_dw.html",gminus_dw_html) 
 
