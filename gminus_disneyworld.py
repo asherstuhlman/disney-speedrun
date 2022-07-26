@@ -217,6 +217,7 @@ def main():
         save_html_remotely("gminus_dw.html",gminus_dw_html) 
 
         save_js_remotely("ride_data.csv",waitfile) 
+        save_js_remotely("ride_data_"+str(now.month)+"-"+str(now.day)+".csv",waitfile)
         save_js_remotely("ride_data_dw.csv",waitfile_dw) 
         save_js_remotely("update_date.js",datefile)
         save_js_remotely("ride_data.js",js_waitfile)
