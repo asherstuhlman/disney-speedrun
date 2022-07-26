@@ -162,7 +162,7 @@ def main():
         date_txt = month_now + "/" + day_now
 
         save_js_remotely("ride_data.csv",waitfile) 
-        save_js_remotely("ride_data"+str(now.month)+"-"+str(now.day)+".csv",waitfile)
+        save_js_remotely("ride_data_"+str(now.month)+"-"+str(now.day)+".csv",waitfile)
         save_js_remotely("update_date.js",datefile)
         save_js_remotely("ride_data_x.js",js_waitfile)
         save_js_remotely("update_date.txt",date_txt)
