@@ -86,20 +86,20 @@ def updateWaitRatio(df):
 
                 try:
                     predictedVsCurrentWait = current_wait_time / y_df.at[row[0],current_time_label]
-                except ZeroDivisionError:
+                except (ValueError,ZeroDivisionError) as error:
                     predictedVsCurrentWait = 1
                 
                 if current_time.hour < 23: #don't use this measure last hour of the day
                     try:
                         predictedFutureWaitTimeUp = y_df.at[row[0],current_time_label] / y_df.at[row[0],future_time_label]
-                    except ZeroDivisionError:
+                    except (ValueError,ZeroDivisionError) as error:
                         predictedFutureWaitTimeUp = 1
                 else:
                     predictedFutureWaitTimeUp = 0
 
                 try:
                     currentVsAverage = y_df.at[row[0],"average_wait"] / current_wait_time
-                except ZeroDivisionError:
+                except (ValueError,ZeroDivisionError) as error:
                     currentVsAverage = 1
                 
                 logFile.append[row[0],row[1],waitTimeGoingDownRatio, predictedVsCurrentWait,predictedFutureWaitTimeUp,currentVsAverage]
