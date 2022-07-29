@@ -102,7 +102,7 @@ def updateWaitRatio(df):
                 except (ValueError,ZeroDivisionError) as error:
                     currentVsAverage = 1
                 
-                logFile.append[row[0],row[1],waitTimeGoingDownRatio, predictedVsCurrentWait,predictedFutureWaitTimeUp,currentVsAverage]
+                logFile.append([row[0],row[1],waitTimeGoingDownRatio, predictedVsCurrentWait,predictedFutureWaitTimeUp,currentVsAverage])
 
                 waitRatio = waitTimeGoingDownRatio + predictedVsCurrentWait + predictedFutureWaitTimeUp + currentVsAverage 
                 df.at[row[0],"wait_ratio"] = waitRatio
