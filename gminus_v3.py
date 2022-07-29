@@ -72,6 +72,7 @@ def updateWaitRatio(df):
             #2. Predicted wait / current wait (Is the predicted wait higher than the actual wait right now? Good)
             #3. Predicted wait in 30 minutes / predicted wait (Is the predicted wait now better than the wait in 30 minutes? Good. We use predicted weight as the denominator because this is a ratio, and past days might not be representative of current absolute values for wait)
             #4. Current wait / How long you _should_ wait for the ride (average wait time over the course of the day? or personal scoring)
+            #THESE WERE ALL UPSIDE DOWN OOPS
             #TO GET THE PREDICTED WAIT TIMES: Look at the last seven days of files and find all waits for this ride within 2 minutes
             #This currently just uses yesterday
             current_time = datetime.now(pytz.timezone("US/Pacific"))
@@ -81,19 +82,24 @@ def updateWaitRatio(df):
             future_time_label = str(future_time.hour).zfill(2)+':'+str(future_time.minute).zfill(2)
 
             if df.at[row[0],"park"] in ["DL","DCA"]:
-                predictedVsCurrentWait = y_df.at[row[0],current_time_label] / current_wait_time
+
+                try:
+                    predictedVsCurrentWait = current_wait_time / y_df.at[row[0],current_time_label]
+                except ZeroDivisionError:
+                    predictedVsCurrentWait = 1
+                
                 if current_time.hour < 23: #don't use this measure last hour of the day
                     try:
-                        predictedFutureWaitTimeUp = y_df.at[row[0],future_time_label] / y_df.at[row[0],current_time_label]
+                        predictedFutureWaitTimeUp = y_df.at[row[0],current_time_label] / y_df.at[row[0],future_time_label]
                     except ZeroDivisionError:
-                        predictedFutureWaitTimeUp = 0
+                        predictedFutureWaitTimeUp = 1
                 else:
                     predictedFutureWaitTimeUp = 0
 
                 try:
-                    currentVsAverage = current_wait_time / y_df.at[row[0],"average_wait"]
+                    currentVsAverage = y_df.at[row[0],"average_wait"] / current_wait_time
                 except ZeroDivisionError:
-                    currentVsAverage = 0
+                    currentVsAverage = 1
                 
                 waitRatio = waitTimeGoingDownRatio + predictedVsCurrentWait + predictedFutureWaitTimeUp + currentVsAverage 
                 df.at[row[0],"wait_ratio"] = waitRatio
