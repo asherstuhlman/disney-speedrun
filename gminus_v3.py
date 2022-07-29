@@ -83,13 +83,19 @@ def updateWaitRatio(df):
             if df.at[row[0],"park"] in ["DL","DCA"]:
                 predictedVsCurrentWait = y_df.at[row[0],current_time_label] / current_wait_time
                 if current_time.hour < 23: #don't use this measure last hour of the day
-                    
-                    predictedFutureTimePercentUp = y_df.at[row[0],future_time_label] / y_df.at[row[0],current_time_label]
+                    try:
+                        predictedFutureWaitTimeUp = y_df.at[row[0],future_time_label] / y_df.at[row[0],current_time_label]
+                    except ZeroDivisionError:
+                        predictedFutureWaitTimeUp = 0
                 else:
-                    predictedFutureTimePercentUp = 0
-                currentVsAverage = current_wait_time / y_df.at[row[0],"average_wait"]
+                    predictedFutureWaitTimeUp = 0
+
+                try:
+                    currentVsAverage = current_wait_time / y_df.at[row[0],"average_wait"]
+                except ZeroDivisionError:
+                    currentVsAverage = 0
                 
-                waitRatio = waitTimeGoingDownRatio + predictedVsCurrentWait + predictedFutureTimePercentUp + currentVsAverage 
+                waitRatio = waitTimeGoingDownRatio + predictedVsCurrentWait + predictedFutureWaitTimeUp + currentVsAverage 
                 df.at[row[0],"wait_ratio"] = waitRatio
             else:
                 df.at[row[0],"wait_ratio"] = waitTimeGoingDownRatio
