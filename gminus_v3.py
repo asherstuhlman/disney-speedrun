@@ -39,6 +39,7 @@ def updateWaitRatio(df):
     #2. Predicted wait / current wait (Is the predicted wait higher than the actual wait right now? Good)
     #3. Predicted wait in 30 minutes / predicted wait (Is the predicted wait now better than the wait in 30 minutes? Good. We use predicted weight as the denominator because this is a ratio, and past days might not be representative of current absolute values for wait)
     last_col = len(df.columns)
+    logFile = []
     #print(df.itertuples())
     if last_col > 20: #if we have enough data points
         for row in df.itertuples():
@@ -101,6 +102,8 @@ def updateWaitRatio(df):
                 except ZeroDivisionError:
                     currentVsAverage = 1
                 
+                logFile.append[row[0],row[1],waitTimeGoingDownRatio, predictedVsCurrentWait,predictedFutureWaitTimeUp,currentVsAverage]
+
                 waitRatio = waitTimeGoingDownRatio + predictedVsCurrentWait + predictedFutureWaitTimeUp + currentVsAverage 
                 df.at[row[0],"wait_ratio"] = waitRatio
             else:
@@ -109,6 +112,7 @@ def updateWaitRatio(df):
         for row in df.itertuples():
             waitRatio = 1
             df.at[row[0],"wait_ratio"] = waitRatio
+    save_js_remotely("logfile.txt",logfile) 
     return df
 
 #todo: use https://github.com/cubehouse/themeparks for park open/close times so i don't waste cycles

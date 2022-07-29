@@ -26,7 +26,7 @@ ride_id,id,truename,lat,lon,park,single_rider,lightning_lane,individual_lightnin
 22,325,Haunted Mansion,33.8117847155918,-117.922164604746,DL,No,Yes,No
 23,305,Storybook Land Canal Boats,33.8136456384136,-117.918260934846,DL,No,No,No
 27,328,Sailing Ship Columbia,33.8122948987511,-117.920549168324,DL,No,No,No
-28,6340,Rise of the Resistance,33.8137284211575,-117.923408698299,DL,No,No,No
+28,6340,Rise of the Resistance,33.8137284211575,-117.923408698299,DL,No,No,Yes
 29,289,Pirates of the Caribbean,33.8113051192015,-117.92083294744,DL,No,No,No
 30,300,Jumpin Jellyfish ,33.8060681225906,-117.922700477495,DCA,No,No,No
 31,2608,Luigis Rollickin Roadsters ,33.8054769582633,-117.918224766888,DCA,No,No,No
