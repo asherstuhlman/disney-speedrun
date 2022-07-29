@@ -6,6 +6,7 @@ import os
 import pytz
 import io
 import ftplib
+import math
 from boto.s3.connection import S3Connection
 
 import gm_format_csv #from this directory
@@ -83,13 +84,18 @@ def updateWaitRatio(df):
             future_time_label = str(future_time.hour).zfill(2)+':'+str(future_time.minute).zfill(2)
 
             if df.at[row[0],"park"] in ["DL","DCA"]:
-
-                try:
-                    predictedVsCurrentWait = current_wait_time / y_df.at[row[0],current_time_label]
-                except (ValueError,ZeroDivisionError) as error:
-                    predictedVsCurrentWait = 1
                 
-                if current_time.hour < 23: #don't use this measure last hour of the day
+                predictedVsCurrentWait = 1
+                predictedFutureWaitTimeUp = 1
+                currentVsAverage = 1
+
+                if math.isfinite(y_df.at[row[0],current_time_label]):
+                    try:
+                        predictedVsCurrentWait = current_wait_time / y_df.at[row[0],current_time_label]
+                    except (ValueError,ZeroDivisionError) as error:
+                        predictedVsCurrentWait = 1
+                
+                if current_time.hour < 23 and math.isfinite(y_df.at[row[0],future_time_label]): #don't use this measure last hour of the day
                     try:
                         predictedFutureWaitTimeUp = y_df.at[row[0],current_time_label] / y_df.at[row[0],future_time_label]
                     except (ValueError,ZeroDivisionError) as error:
@@ -97,10 +103,11 @@ def updateWaitRatio(df):
                 else:
                     predictedFutureWaitTimeUp = 0
 
-                try:
-                    currentVsAverage = y_df.at[row[0],"average_wait"] / current_wait_time
-                except (ValueError,ZeroDivisionError) as error:
-                    currentVsAverage = 1
+                if math.isfinite(y_df.at[row[0],"average_wait"]):
+                    try:
+                        currentVsAverage = y_df.at[row[0],"average_wait"] / current_wait_time
+                    except (ValueError,ZeroDivisionError) as error:
+                        currentVsAverage = 1
                 
                 logFile.append(' ~ '.join([str(row[2]),str(row[1]),str(waitTimeGoingDownRatio),str(predictedVsCurrentWait),str(predictedFutureWaitTimeUp),str(currentVsAverage)]))
 
