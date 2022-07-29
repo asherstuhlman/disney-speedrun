@@ -43,6 +43,7 @@ def updateWaitRatio(df):
     last_col = len(df.columns)
     #print(df.itertuples())
     if last_col > 20: #if we have enough data points
+        logFile = []
         for row in df.itertuples():
             #FIRST SECTION: Get #1, the highest wait in the last 45 minutes / current wait
             current_wait_time = df.iat[row[0],last_col-1]
@@ -82,7 +83,6 @@ def updateWaitRatio(df):
             #format them
             current_time_label = str(current_time.hour).zfill(2)+':'+str(current_time.minute).zfill(2)
             future_time_label = str(future_time.hour).zfill(2)+':'+str(future_time.minute).zfill(2)
-            logFile = []
             if df.at[row[0],"park"] in ["DL","DCA"]:
                 
                 predictedVsCurrentWait = 1
