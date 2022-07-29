@@ -102,7 +102,7 @@ def updateWaitRatio(df):
                 except (ValueError,ZeroDivisionError) as error:
                     currentVsAverage = 1
                 
-                logFile.append([row[0],row[1],waitTimeGoingDownRatio, predictedVsCurrentWait,predictedFutureWaitTimeUp,currentVsAverage])
+                logFile.append(' '.join([row[0],row[1],waitTimeGoingDownRatio, predictedVsCurrentWait,predictedFutureWaitTimeUp,currentVsAverage]))
 
                 waitRatio = waitTimeGoingDownRatio + predictedVsCurrentWait + predictedFutureWaitTimeUp + currentVsAverage 
                 df.at[row[0],"wait_ratio"] = waitRatio
@@ -112,7 +112,7 @@ def updateWaitRatio(df):
         for row in df.itertuples():
             waitRatio = 1
             df.at[row[0],"wait_ratio"] = waitRatio
-    save_js_remotely("logfile.txt",''.join(logFile))
+    save_js_remotely("logfile.txt",' '.join(logFile))
     return df
 
 #todo: use https://github.com/cubehouse/themeparks for park open/close times so i don't waste cycles
