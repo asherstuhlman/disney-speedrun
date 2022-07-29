@@ -112,7 +112,7 @@ def updateWaitRatio(df):
         for row in df.itertuples():
             waitRatio = 1
             df.at[row[0],"wait_ratio"] = waitRatio
-    save_js_remotely("logfile.txt",' '.join(logFile))
+    save_js_remotely("logfile.txt",'\n'.join(logFile))
     return df
 
 #todo: use https://github.com/cubehouse/themeparks for park open/close times so i don't waste cycles
