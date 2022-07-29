@@ -65,6 +65,7 @@ def updateWaitRatio(df):
             except ZeroDivisionError: #shouldn't happen anymore
                 waitTimeGoingDownRatio = 0.9 #if it's a zero division, then we messed up somehow, but it happened because recent_min was 0
 
+            #THIS SHOULS ONLY WORK FOR DISNEYLAND - NEED A SOL'N FOR DISNEYWORLD
             yesterday = datetime.now(pytz.timezone("US/Central")) - timedelta(days = 1)
             y_df = pd.read_csv('http://stuhlman.net/gminus/js/ride_data_cleaned_'+str(yesterday.month)+'-'+str(yesterday.day)+'.csv', encoding = "ISO-8859-1")
             
@@ -76,20 +77,22 @@ def updateWaitRatio(df):
             current_time = datetime.now(pytz.timezone("US/Pacific"))
             future_time = current_time + timedelta(minutes = 45)
             #format them
-            current_time = str(current_time.hour).zfill(2)+':'+str(current_time.minute).zfill(2)
-            future_time = str(future_time.hour).zfill(2)+':'+str(future_time.minute).zfill(2)
+            current_time_label = str(current_time.hour).zfill(2)+':'+str(current_time.minute).zfill(2)
+            future_time_label = str(future_time.hour).zfill(2)+':'+str(future_time.minute).zfill(2)
 
-            predictedVsCurrentWait = y_df.at[row[0],current_time] / current_wait_time
-            if current_time.hour < 23: #don't use this measure last hour of the day
+            if df.at[row[0],"park"] in ["DL","DCA"]:
+                predictedVsCurrentWait = y_df.at[row[0],current_time_label] / current_wait_time
+                if current_time.hour < 23: #don't use this measure last hour of the day
+                    
+                    predictedFutureTimePercentUp = y_df.at[row[0],future_time_label] / y_df.at[row[0],current_time_label]
+                else:
+                    predictedFutureTimePercentUp = 0
+                currentVsAverage = current_wait_time / y_df.at[row[0],"average_wait"]
                 
-                predictedFutureTimePercentUp = y_df.at[row[0],future_time] / y_df.at[row[0],current_time]
+                waitRatio = waitTimeGoingDownRatio + predictedVsCurrentWait + predictedFutureTimePercentUp + currentVsAverage 
+                df.at[row[0],"wait_ratio"] = waitRatio
             else:
-                predictedFutureTimePercentUp = 0
-            currentVsAverage = current_wait_time / y_df.at[row[0],"average_wait"]
-            
-            waitRatio = waitTimeGoingDownRatio + predictedVsCurrentWait + predictedFutureTimePercentUp + currentVsAverage 
-            df.at[row[0],"wait_ratio"] = waitRatio
-            print(waitRatio)
+                df.at[row[0],"wait_ratio"] = waitTimeGoingDownRatio
     else:
         for row in df.itertuples():
             waitRatio = 1
