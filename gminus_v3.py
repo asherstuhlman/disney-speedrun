@@ -95,7 +95,7 @@ def updateWaitRatio(df):
                     except (ValueError,ZeroDivisionError) as error:
                         predictedVsCurrentWait = 1
                 
-                if current_time.hour < 23 and math.isfinite(y_df.at[row[0],future_time_label]): #don't use this measure last hour of the day
+                if current_time.hour < 23 and math.isfinite(y_df.at[row[0],current_time_label]) and math.isfinite(y_df.at[row[0],future_time_label]): #don't use this measure last hour of the day
                     try:
                         predictedFutureWaitTimeUp = y_df.at[row[0],current_time_label] / y_df.at[row[0],future_time_label]
                     except (ValueError,ZeroDivisionError) as error:
