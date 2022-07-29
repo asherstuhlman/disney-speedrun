@@ -82,9 +82,9 @@ def updateWaitRatio(df):
             #format them
             current_time_label = str(current_time.hour).zfill(2)+':'+str(current_time.minute).zfill(2)
             future_time_label = str(future_time.hour).zfill(2)+':'+str(future_time.minute).zfill(2)
-
+            logFile = []
             if df.at[row[0],"park"] in ["DL","DCA"]:
-                logFile = []
+                
                 predictedVsCurrentWait = 1
                 predictedFutureWaitTimeUp = 1
                 currentVsAverage = 1
