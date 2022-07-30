@@ -107,6 +107,7 @@ def updateWaitRatio(df):
                         predictedFutureWaitTimeUp = 1
                 
                 averageWait = y_df.loc[y_df['id'] == df.at[row[0],"id"],"average_wait"]
+                print(averageWait)
                 if math.isfinite(averageWait) and averageWait > 0:
                     try: #Is the current wait better than the average wait over the course of the day?
                         currentVsAverage = current_wait_time / averageWait
