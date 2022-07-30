@@ -214,7 +214,7 @@ def main():
         if int(last_updated) != now.day:
             #create a new file with formatted minute-by-minute data
             yesterday = datetime.now(pytz.timezone("US/Pacific")) - timedelta(days = 1)
-            save_js_remotely('http://stuhlman.net/gminus/js/ride_data_formatted_'+str(yesterday.month)+'-'+str(yesterday.day)+'.csv',gm_format_csv.format_csv_for_predictions(1))
+            save_js_remotely('http://stuhlman.net/gminus/js/ride_data_cleaned_'+str(yesterday.month)+'-'+str(yesterday.day)+'.csv',gm_format_csv.format_csv_for_predictions(1))
             #create a new dataframe for rides
             df = pd.DataFrame(columns = ['id','name','current_wait','wait_ratio','lat','lon','park','single_rider','lightning_lane','individual_lightning_lane','average_wait','wait_yesterday','wait_in_30'])
             df = appendRides(df,dis_waits_json)
