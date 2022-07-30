@@ -108,9 +108,10 @@ def updateWaitRatio(df):
                     except (ValueError,ZeroDivisionError) as error:
                         currentVsAverage = 1
                 
-                logFile.append(' ~ '.join([str(row[2]),str(row[1]),"average wait yesterday: " + str(y_df.at[row[0],"average_wait"]),str(waitTimeGoingDownRatio),str(predictedVsCurrentWait),str(predictedFutureWaitTimeUp),str(currentVsAverage)]))
-
                 waitRatio = waitTimeGoingDownRatio + predictedVsCurrentWait + predictedFutureWaitTimeUp + currentVsAverage 
+                logFile.append(' ~ '.join([str(row[2]),str(row[1]),"average wait yesterday: " + str(y_df.at[row[0],"average_wait"]),str(waitTimeGoingDownRatio),str(predictedVsCurrentWait),str(predictedFutureWaitTimeUp),str(currentVsAverage),"Sum: "+str(waitRatio)]))
+
+                
                 df.at[row[0],"wait_ratio"] = waitRatio
                 save_js_remotely("logfile.txt",' | '.join(logFile))
             else:
