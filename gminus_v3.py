@@ -89,6 +89,7 @@ def updateWaitRatio(df):
                 predictedFutureWaitTimeUp = 1
                 currentVsAverage = 1
 
+                print(y_df.loc[y_df['id'] == df.at[row[0],"id"],current_time_label])
                 waitSameTimeYesterday = int(y_df.loc[y_df['id'] == df.at[row[0],"id"],current_time_label])
                 print(waitSameTimeYesterday)
 
