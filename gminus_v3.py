@@ -107,14 +107,14 @@ def updateWaitRatio(df):
                         predictedFutureWaitTimeUp = 1
                 
                 averageWait = y_df.loc[y_df['id'] == df.at[row[0],"id"],"average_wait"]
-                if math.isfinite(averageWait):
+                if math.isfinite(averageWait) and averageWait > 0:
                     try: #Is the current wait better than the average wait over the course of the day?
                         currentVsAverage = current_wait_time / averageWait
                     except (ValueError,ZeroDivisionError) as error:
                         currentVsAverage = 1
                 
                 waitRatio = waitTimeGoingDownRatio + predictedVsCurrentWait + predictedFutureWaitTimeUp + currentVsAverage 
-                logFile.append(' ~ '.join([str(row[2]),str(row[1]),"average wait yesterday: " + str(y_df.at[row[0],"average_wait"]),str(waitTimeGoingDownRatio),str(predictedVsCurrentWait),str(predictedFutureWaitTimeUp),str(currentVsAverage),"Sum: "+str(waitRatio)]))
+                logFile.append(' ~ '.join([str(row[2]),str(row[1]),"average wait yesterday: " + averageWait,str(waitTimeGoingDownRatio),str(predictedVsCurrentWait),str(predictedFutureWaitTimeUp),str(currentVsAverage),"Sum: "+str(waitRatio)]))
 
                 
                 df.at[row[0],"wait_ratio"] = waitRatio
