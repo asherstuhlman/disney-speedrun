@@ -89,22 +89,27 @@ def updateWaitRatio(df):
                 predictedFutureWaitTimeUp = 1
                 currentVsAverage = 1
 
-                if math.isfinite(y_df.at[row[0],current_time_label]): #is the current wait less than the average wait at this time?
-                    predictedVsCurrentWait = current_wait_time / y_df.at[row[0],current_time_label]
+                waitSameTimeYesterday = y_df.loc[y_df['id'] == df.at[row[0],"id"],current_time_label]
+
+                if math.isfinite(waitSameTimeYesterday): #is the current wait less than the average wait at this exact time?
+                    predictedVsCurrentWait = current_wait_time / waitSameTimeYesterday
                 if math.isfinite(predictedVsCurrentWait) == False:
                     predictedVsCurrentWait = 1
                 
-                if current_time.hour < 23 and math.isfinite(y_df.at[row[0],current_time_label]) and math.isfinite(y_df.at[row[0],future_time_label]): #don't use this measure last hour of the day
+                waitYesterdayIn45Min = y_df.loc[y_df['id'] == df.at[row[0],"id"],future_time_label]
+
+                if current_time.hour < 23 and math.isfinite(waitSameTimeYesterday) and math.isfinite(waitYesterdayIn45Min): #don't use this measure last hour of the day
                     try: #do we expect the ride to go up or down in time?
-                        predictedFutureWaitTimeUp = y_df.at[row[0],current_time_label] / y_df.at[row[0],future_time_label]
+                        predictedFutureWaitTimeUp = waitSameTimeYesterday / waitYesterdayIn45Min
                     except (ValueError,ZeroDivisionError) as error:
                         predictedFutureWaitTimeUp = 1
                     if math.isfinite(predictedFutureWaitTimeUp) == False:
                         predictedFutureWaitTimeUp = 1
-
-                if math.isfinite(y_df.at[row[0],"average_wait"]):
+                
+                averageWait = y_df.loc[y_df['id'] == df.at[row[0],"id"],"average_wait"]
+                if math.isfinite(averageWait):
                     try: #Is the current wait better than the average wait over the course of the day?
-                        currentVsAverage = current_wait_time / y_df.at[row[0],"average_wait"]
+                        currentVsAverage = current_wait_time / averageWait
                     except (ValueError,ZeroDivisionError) as error:
                         currentVsAverage = 1
                 
