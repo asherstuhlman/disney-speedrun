@@ -102,6 +102,8 @@ def format_csv_for_predictions(prediction_time_delta = 1):
                         if np.isfinite(rowdata[check_forward]):
                             next_value = rowdata[check_forward]
                         limit += 1
+                if next_value == -1:
+                    next_value = 0
                 out_df.loc[out_df['id']  == rowdata['id'],labelDate] = next_value
     return (out_df.to_csv())
     #return (out_df.to_csv('http://stuhlman.net/gminus/js/ride_data_formatted_'+str(yesterday.month)+'-'+str(yesterday.day)+'.csv', encoding = "ISO-8859-1", index = False))
