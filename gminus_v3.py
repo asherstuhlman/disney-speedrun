@@ -89,13 +89,13 @@ def updateWaitRatio(df):
                 predictedFutureWaitTimeUp = 1
                 currentVsAverage = 1
 
-                if math.isfinite(y_df.at[row[0],current_time_label]):
+                if math.isfinite(y_df.at[row[0],current_time_label]): #is the current wait less than the average wait at this time?
                     predictedVsCurrentWait = current_wait_time / y_df.at[row[0],current_time_label]
                 if math.isfinite(predictedVsCurrentWait) == False:
                     predictedVsCurrentWait = 1
                 
                 if current_time.hour < 23 and math.isfinite(y_df.at[row[0],current_time_label]) and math.isfinite(y_df.at[row[0],future_time_label]): #don't use this measure last hour of the day
-                    try:
+                    try: #do we expect the ride to go up or down in time?
                         predictedFutureWaitTimeUp = y_df.at[row[0],current_time_label] / y_df.at[row[0],future_time_label]
                     except (ValueError,ZeroDivisionError) as error:
                         predictedFutureWaitTimeUp = 1
@@ -103,8 +103,8 @@ def updateWaitRatio(df):
                         predictedFutureWaitTimeUp = 1
 
                 if math.isfinite(y_df.at[row[0],"average_wait"]):
-                    try:
-                        currentVsAverage = y_df.at[row[0],"average_wait"] / current_wait_time
+                    try: #Is the current wait better than the average wait over the course of the day?
+                        currentVsAverage = current_wait_time / y_df.at[row[0],"average_wait"]
                     except (ValueError,ZeroDivisionError) as error:
                         currentVsAverage = 1
                 
