@@ -114,7 +114,7 @@ def updateWaitRatio(df):
                         currentVsAverage = 1
                 
                 waitRatio = waitTimeGoingDownRatio + predictedVsCurrentWait + predictedFutureWaitTimeUp + currentVsAverage 
-                logFile.append(' ~ '.join([str(row[2]),str(row[1]),"average wait yesterday: " + averageWait,str(waitTimeGoingDownRatio),str(predictedVsCurrentWait),str(predictedFutureWaitTimeUp),str(currentVsAverage),"Sum: "+str(waitRatio)]))
+                logFile.append(' ~ '.join([str(row[2]),str(row[1]),"average wait yesterday: " + str(averageWait),str(waitTimeGoingDownRatio),str(predictedVsCurrentWait),str(predictedFutureWaitTimeUp),str(currentVsAverage),"Sum: "+str(waitRatio)]))
 
                 
                 df.at[row[0],"wait_ratio"] = waitRatio
