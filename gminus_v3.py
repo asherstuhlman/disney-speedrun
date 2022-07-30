@@ -99,12 +99,13 @@ def updateWaitRatio(df):
                 waitYesterdayIn45Min = int(y_df.loc[y_df['id'] == df.at[row[0],"id"],future_time_label])
 
                 if current_time.hour < 23 and math.isfinite(waitSameTimeYesterday) and math.isfinite(waitYesterdayIn45Min): #don't use this measure last hour of the day
-                    try: #do we expect the ride to go up or down in time?
-                        predictedFutureWaitTimeUp = waitSameTimeYesterday / waitYesterdayIn45Min
-                    except (ValueError,ZeroDivisionError) as error:
-                        predictedFutureWaitTimeUp = 1
-                    if math.isfinite(predictedFutureWaitTimeUp) == False:
-                        predictedFutureWaitTimeUp = 1
+                    if waitSameTimeYesterday > 0:
+                        try: #do we expect the ride to go up or down in time?
+                            predictedFutureWaitTimeUp = waitSameTimeYesterday / waitYesterdayIn45Min
+                        except (ValueError,ZeroDivisionError) as error:
+                            predictedFutureWaitTimeUp = 1
+                        if math.isfinite(predictedFutureWaitTimeUp) == False:
+                            predictedFutureWaitTimeUp = 1
                 
                 averageWait = int(y_df.loc[y_df['id'] == df.at[row[0],"id"],"average_wait"])
                 if math.isfinite(averageWait) and averageWait > 0:
