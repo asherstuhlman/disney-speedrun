@@ -89,7 +89,7 @@ def updateWaitRatio(df):
                 predictedFutureWaitTimeUp = 1
                 currentVsAverage = 1
 
-                waitSameTimeYesterday = y_df.loc[y_df['id'] == df.at[row[0],"id"],current_time_label]
+                waitSameTimeYesterday = int(y_df.loc[y_df['id'] == df.at[row[0],"id"],current_time_label])
                 print(waitSameTimeYesterday)
 
                 if math.isfinite(waitSameTimeYesterday): #is the current wait less than the average wait at this exact time?
@@ -97,7 +97,7 @@ def updateWaitRatio(df):
                 if math.isfinite(predictedVsCurrentWait) == False:
                     predictedVsCurrentWait = 1
                 
-                waitYesterdayIn45Min = y_df.loc[y_df['id'] == df.at[row[0],"id"],future_time_label]
+                waitYesterdayIn45Min = int(y_df.loc[y_df['id'] == df.at[row[0],"id"],future_time_label])
                 print(waitYesterdayIn45Min)
 
                 if current_time.hour < 23 and math.isfinite(waitSameTimeYesterday) and math.isfinite(waitYesterdayIn45Min): #don't use this measure last hour of the day
@@ -108,7 +108,7 @@ def updateWaitRatio(df):
                     if math.isfinite(predictedFutureWaitTimeUp) == False:
                         predictedFutureWaitTimeUp = 1
                 
-                averageWait = y_df.loc[y_df['id'] == df.at[row[0],"id"],"average_wait"][1]
+                averageWait = int(y_df.loc[y_df['id'] == df.at[row[0],"id"],"average_wait"])
                 print(averageWait)
                 if math.isfinite(averageWait) and averageWait > 0:
                     try: #Is the current wait better than the average wait over the course of the day?
