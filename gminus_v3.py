@@ -295,7 +295,8 @@ def main():
         print("Files saved, sleeping")
         if (do_exactly_twice==0):
             print("sleeping for: "+str((datetime.now(pytz.timezone("US/Pacific")) - next_run_time).seconds))
-            sleep(max(1,(datetime.now(pytz.timezone("US/Pacific")) - next_run_time).seconds)) #we do this every 5 minutes, but it's scheduled for every 10 minutes, so we do it twice instead
+            if (datetime.now(pytz.timezone("US/Pacific")) - next_run_time).seconds < 300:
+                sleep(max(1,(datetime.now(pytz.timezone("US/Pacific")) - next_run_time).seconds)) #we do this every 5 minutes, but it's scheduled for every 10 minutes, so we do it twice instead
             print("waking up!")
 
 main()
