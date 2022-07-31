@@ -155,12 +155,12 @@ def save_js_remotely(filename,file):
     ftp.login(myUsername,myPassword)
 
     ftpResponseMessage = ftp.cwd("/public_html/gminus/js");
-    print(ftpResponseMessage)
+    #print(ftpResponseMessage)
 
     file_to_ftp = io.BytesIO(file.encode('utf-8'))
     
     ftpResponseMessage = ftp.storbinary("STOR "+filename,file_to_ftp)
-    print(ftpResponseMessage)
+    #print(ftpResponseMessage)
 
     ftp.quit()
 
@@ -174,12 +174,12 @@ def save_html_remotely(filename,file): #it's stupid that I have two different fu
     ftp.login(myUsername,myPassword)
 
     ftpResponseMessage = ftp.cwd("/public_html/gminus");
-    print(ftpResponseMessage)
+    #print(ftpResponseMessage)
 
     file_to_ftp = io.BytesIO(file.encode('utf-8'))
     
     ftpResponseMessage = ftp.storbinary("STOR "+filename,file_to_ftp)
-    print(ftpResponseMessage)
+    #print(ftpResponseMessage)
 
     ftp.quit()
 
@@ -294,6 +294,7 @@ def main():
         save_js_remotely("update_date.txt",date_txt)
         print("Files saved, sleeping")
         if (do_exactly_twice==0):
-            sleep((datetime.now(pytz.timezone("US/Pacific")) - next_run_time).seconds) #we do this every 5 minutes, but it's scheduled for every 10 minutes, so we do it twice instead
+            print("sleeping for: "+str((datetime.now(pytz.timezone("US/Pacific")) - next_run_time).seconds))
+            sleep(max(1,(datetime.now(pytz.timezone("US/Pacific")) - next_run_time).seconds)) #we do this every 5 minutes, but it's scheduled for every 10 minutes, so we do it twice instead
 
 main()
