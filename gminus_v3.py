@@ -197,6 +197,8 @@ def rename_js_with_question_mark(htmlfile,datetxt): #TAKES IN AN HTML FILE and t
 
 
 def main():
+    start_time = datetime.now(pytz.timezone("US/Pacific"))
+    next_run_time = start_time + timedelta(minutes = 5)
     for do_exactly_twice in range(2):
         print("Hello!")
         now = datetime.now(pytz.timezone("US/Pacific")) #Disneyland timezone
@@ -292,6 +294,6 @@ def main():
         save_js_remotely("update_date.txt",date_txt)
         print("Files saved, sleeping")
         if (do_exactly_twice==0):
-            sleep(297) #we do this every 5 minutes, but it's scheduled for every 10 minutes, so we do it twice instead
+            sleep((datetime.now(pytz.timezone("US/Pacific")) - next_run_time).seconds) #we do this every 5 minutes, but it's scheduled for every 10 minutes, so we do it twice instead
 
 main()
