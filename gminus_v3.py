@@ -197,7 +197,7 @@ def rename_js_with_question_mark(htmlfile,datetxt): #TAKES IN AN HTML FILE and t
 
 
 def main():
-    for do_six_times in range(6):
+    for do_192_times in range(192):
         next_run_time = datetime.now(pytz.timezone("US/Pacific")) + timedelta(minutes = 5)
         print("Hello!")
         now = datetime.now(pytz.timezone("US/Pacific")) #Disneyland timezone
@@ -292,7 +292,7 @@ def main():
         save_js_remotely("ride_data_dw.js",js_waitfile_dw)
         save_js_remotely("update_date.txt",date_txt)
         print("Files saved, sleeping")
-        if (do_six_times<5):
+        if (do_192_times<191):
             print("sleeping for: "+str((datetime.now(pytz.timezone("US/Pacific")) - next_run_time).seconds))
             if (datetime.now(pytz.timezone("US/Pacific")) - next_run_time).seconds < 300:
                 sleep(max(1,(datetime.now(pytz.timezone("US/Pacific")) - next_run_time).seconds)) #we do this every 5 minutes, but it's scheduled for every 10 minutes, so we do it twice instead
