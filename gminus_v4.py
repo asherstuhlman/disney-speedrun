@@ -36,10 +36,12 @@ def addWaitTimes(df,json_file,next_col_name): #go through an update file and fil
     return df
 
 def updateWaitRatio(df):
-    #wait ratio has three factors:
+    #wait ratio has four factors:
     #1. Highest wait in the last 45 minutes / current wait (Is the current wait time going down? Good)
     #2. Predicted wait / current wait (Is the predicted wait higher than the actual wait right now? Good)
     #3. Predicted wait in 30 minutes / predicted wait (Is the predicted wait now better than the wait in 30 minutes? Good. We use predicted weight as the denominator because this is a ratio, and past days might not be representative of current absolute values for wait)
+    #4. Current wait / How long you _should_ wait for the ride (average wait time over the course of the day? or personal scoring)
+
     last_col = len(df.columns)
     #print(df.itertuples())
     if last_col > 20: #if we have enough data points
@@ -68,14 +70,15 @@ def updateWaitRatio(df):
             except ZeroDivisionError: #shouldn't happen anymore
                 waitTimeGoingDownRatio = 0.9 #if it's a zero division, then we messed up somehow, but it happened because recent_min was 0
 
-            #THIS SHOULS ONLY WORK FOR DISNEYLAND - NEED A SOL'N FOR DISNEYWORLD
-            yesterday = datetime.now(pytz.timezone("US/Central")) - timedelta(days = 1)
-            y_df = pd.read_csv('http://stuhlman.net/gminus/js/ride_data_cleaned_'+str(yesterday.month)+'-'+str(yesterday.day)+'.csv', encoding = "ISO-8859-1")
+            #THIS SHOULD ONLY WORK FOR DISNEYLAND - NEED A SOL'N FOR DISNEYWORLD
+            y_dfs = []
+            for y in range(7):
+                previous_day = datetime.now(pytz.timezone("US/Central")) - timedelta(days = y+1)
+                y_dfs.append(pd.read_csv('http://stuhlman.net/gminus/js/ride_data_cleaned_'+str(previous_day.month)+'-'+str(previous_day.day)+'.csv', encoding = "ISO-8859-1"))
             
             #2. Predicted wait / current wait (Is the predicted wait higher than the actual wait right now? Good)
             #3. Predicted wait in 30 minutes / predicted wait (Is the predicted wait now better than the wait in 30 minutes? Good. We use predicted weight as the denominator because this is a ratio, and past days might not be representative of current absolute values for wait)
-            #4. Current wait / How long you _should_ wait for the ride (average wait time over the course of the day? or personal scoring)
-            #THESE WERE ALL UPSIDE DOWN OOPS
+            
             #TO GET THE PREDICTED WAIT TIMES: Look at the last seven days of files and find all waits for this ride within 2 minutes
             #This currently just uses yesterday
             current_time = datetime.now(pytz.timezone("US/Pacific"))
@@ -89,25 +92,49 @@ def updateWaitRatio(df):
                 predictedFutureWaitTimeUp = 1
                 currentVsAverage = 1
 
-                waitSameTimeYesterday = int(y_df.loc[y_df['id'] == df.at[row[0],"id"],current_time_label])
+                datapoint_sum = 0
+                datapoint_count = 0
+                for i in range(7):
+                    datapoint = int(y_dfs[i].loc[y_dfs[i]['id'] == df.at[y_dfs[i],"id"],current_time_label])
+                    if datapoint > 0:
+                        datapoint_count += 1
+                        datapoint_sum += datapoint
+                waitSameTimeLastWeek = datapoint_sum/datapoint_count
 
-                if math.isfinite(waitSameTimeYesterday) and waitSameTimeYesterday > 0: #is the current wait less than the average wait at this exact time?
-                    predictedVsCurrentWait = current_wait_time / waitSameTimeYesterday
+                if math.isfinite(waitSameTimeLastWeek) and waitSameTimeLastWeek > 0: #is the current wait less than the average wait at this exact time?
+                    predictedVsCurrentWait = current_wait_time / waitSameTimeLastWeek
                 if math.isfinite(predictedVsCurrentWait) == False:
                     predictedVsCurrentWait = 1
-                
-                waitYesterdayIn45Min = int(y_df.loc[y_df['id'] == df.at[row[0],"id"],future_time_label])
 
-                if current_time.hour < 23 and math.isfinite(waitSameTimeYesterday) and math.isfinite(waitYesterdayIn45Min): #don't use this measure last hour of the day
-                    if waitSameTimeYesterday > 0:
+                datapoint_sum = 0
+                datapoint_count = 0
+                for i in range(7):
+                    datapoint = int(y_dfs[i].loc[y_dfs[i]['id'] == df.at[row[0],"id"],future_time_label])
+                    if datapoint > 0:
+                        datapoint_count += 1
+                        datapoint_sum += datapoint
+                waitLastWeekIn45Min = datapoint_sum/datapoint_count
+
+                if current_time.hour < 23 and math.isfinite(waitSameTimeLastWeek) and math.isfinite(waitLastWeekIn45Min): #don't use this measure last hour of the day
+                    if waitSameTimeLastWeek > 0:
                         try: #do we expect the ride to go up or down in time?
-                            predictedFutureWaitTimeUp = waitSameTimeYesterday / waitYesterdayIn45Min
+                            predictedFutureWaitTimeUp = waitSameTimeLastWeek / waitLastWeekIn45Min
                         except (ValueError,ZeroDivisionError) as error:
                             predictedFutureWaitTimeUp = 1
                         if math.isfinite(predictedFutureWaitTimeUp) == False:
                             predictedFutureWaitTimeUp = 1
+
+                #4. Current wait / How long you _should_ wait for the ride (average wait time over the course of the last week)
                 
-                averageWait = int(y_df.loc[y_df['id'] == df.at[row[0],"id"],"average_wait"])
+                datapoint_sum = 0
+                datapoint_count = 0
+                for i in range(7):
+                    datapoint = int(y_dfs[i].loc[y_dfs[i]['id'] == df.at[row[0],"id"],"average_wait"])
+                    if datapoint > 0:
+                        datapoint_count += 1
+                        datapoint_sum += datapoint
+                averageWait = datapoint_sum/datapoint_count
+
                 if math.isfinite(averageWait) and averageWait > 0:
                     try: #Is the current wait better than the average wait over the course of the day?
                         currentVsAverage = current_wait_time / averageWait
@@ -293,9 +320,9 @@ def main():
         save_js_remotely("update_date.txt",date_txt)
         print("Files saved, sleeping")
         if (do_192_times<191):
-            print("sleeping for: "+str(300-(datetime.now(pytz.timezone("US/Pacific")) - now).seconds))
+            print("sleeping for: "+str((datetime.now(pytz.timezone("US/Pacific")) - next_run_time).seconds))
             if (datetime.now(pytz.timezone("US/Pacific")) - next_run_time).seconds < 300:
-                sleep(max(1,300 - (datetime.now(pytz.timezone("US/Pacific")) - now).seconds)) #we do this every 5 minutes, but it's scheduled for every 10 minutes, so we do it twice instead
+                sleep(max(1,300 - (datetime.now(pytz.timezone("US/Pacific")) - next_run_time).seconds)) #we do this every 5 minutes, but it's scheduled for every 10 minutes, so we do it twice instead
             print("waking up!")
 
 main()
